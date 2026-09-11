@@ -4,9 +4,12 @@ const lightbox = document.querySelector('#lightbox');
 const lightboxTitle = document.querySelector('#lightbox-title');
 const lightboxMedia = document.querySelector('#lightbox-media');
 const lightboxPanel = document.querySelector('.lightbox-panel');
+const lightboxPrevious = document.querySelector('#lightbox-previous');
+const lightboxNext = document.querySelector('#lightbox-next');
 const albumItems = document.querySelectorAll('.album-item');
 let currentGallery = [];
 let currentGalleryTitle = '';
+let currentGalleryIndex = 0;
 
 const ugcCover = document.querySelector('.album-art--ugc');
 const ugcCard = ugcCover?.closest('.album-item');
@@ -64,6 +67,8 @@ function renderGalleryGrid(title, gallery) {
       fullImage.className = 'lightbox-full-image';
       lightboxMedia.classList.remove('is-gallery');
       lightboxMedia.classList.add('is-fading');
+      lightboxPanel.classList.add('is-image-view');
+      currentGalleryIndex = index;
       window.setTimeout(() => {
         lightboxMedia.replaceChildren(fullImage);
         lightboxMedia.classList.remove('is-fading');
@@ -79,11 +84,28 @@ function renderGalleryGrid(title, gallery) {
   lightboxMedia.replaceChildren(galleryGrid);
 }
 
+function showGalleryImage(index) {
+  if (currentGallery.length === 0) return;
+
+  currentGalleryIndex = (index + currentGallery.length) % currentGallery.length;
+  const fullImage = document.createElement('img');
+  fullImage.src = currentGallery[currentGalleryIndex];
+  fullImage.alt = `${currentGalleryTitle} creative ${currentGalleryIndex + 1}`;
+  fullImage.className = 'lightbox-full-image';
+  lightboxMedia.classList.add('is-fading');
+  window.setTimeout(() => {
+    lightboxMedia.replaceChildren(fullImage);
+    lightboxMedia.classList.remove('is-fading');
+  }, 140);
+}
+
 function closeLightbox() {
   lightbox.classList.remove('is-open');
   lightbox.setAttribute('aria-hidden', 'true');
   lightboxMedia.replaceChildren();
   lightboxMedia.classList.remove('is-gallery', 'is-fading');
+  lightboxPanel.classList.remove('is-image-view');
+  currentGalleryIndex = 0;
   document.body.style.overflow = '';
 }
 
@@ -97,6 +119,7 @@ albumItems.forEach((item) => {
 
     currentGallery = gallery;
     currentGalleryTitle = title;
+    currentGalleryIndex = 0;
 
     if (gallery.length > 1) {
       renderGalleryGrid(title, gallery);
@@ -133,6 +156,7 @@ lightbox.addEventListener('click', (event) => {
 lightboxPanel.addEventListener('click', (event) => {
   if (!lightboxMedia.querySelector('.lightbox-full-image')) return;
   if (event.target.closest('.lightbox-full-image')) return;
+  if (event.target.closest('.lightbox-nav')) return;
   if (!event.target.closest('.lightbox-close')) {
     lightboxMedia.classList.add('is-fading');
     window.setTimeout(() => {
@@ -142,10 +166,22 @@ lightboxPanel.addEventListener('click', (event) => {
   }
 });
 
+lightboxPrevious.addEventListener('click', (event) => {
+  event.stopPropagation();
+  showGalleryImage(currentGalleryIndex - 1);
+});
+
+lightboxNext.addEventListener('click', (event) => {
+  event.stopPropagation();
+  showGalleryImage(currentGalleryIndex + 1);
+});
+
 document.querySelectorAll('[data-close-lightbox]').forEach((element) => {
   element.addEventListener('click', closeLightbox);
 });
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && lightbox.classList.contains('is-open')) closeLightbox();
+  if (event.key === 'ArrowLeft' && lightbox.classList.contains('is-open') && lightboxMedia.querySelector('.lightbox-full-image')) showGalleryImage(currentGalleryIndex - 1);
+  if (event.key === 'ArrowRight' && lightbox.classList.contains('is-open') && lightboxMedia.querySelector('.lightbox-full-image')) showGalleryImage(currentGalleryIndex + 1);
 });
