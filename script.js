@@ -4,6 +4,7 @@ const lightbox = document.querySelector('#lightbox');
 const lightboxTitle = document.querySelector('#lightbox-title');
 const lightboxMedia = document.querySelector('#lightbox-media');
 const lightboxPanel = document.querySelector('.lightbox-panel');
+const lightboxClose = document.querySelector('.lightbox-close');
 const lightboxPrevious = document.querySelector('#lightbox-previous');
 const lightboxNext = document.querySelector('#lightbox-next');
 const albumItems = document.querySelectorAll('.album-item');
@@ -70,7 +71,7 @@ function renderGalleryGrid(title, gallery) {
       lightboxPanel.classList.add('is-image-view');
       currentGalleryIndex = index;
       window.setTimeout(() => {
-        lightboxMedia.replaceChildren(fullImage);
+        lightboxMedia.replaceChildren(fullImage, lightboxPrevious, lightboxNext);
         lightboxMedia.classList.remove('is-fading');
       }, 140);
     });
@@ -81,7 +82,8 @@ function renderGalleryGrid(title, gallery) {
 
   lightboxMedia.classList.remove('is-fading');
   lightboxMedia.classList.add('is-gallery');
-  lightboxMedia.replaceChildren(galleryGrid);
+  lightboxPanel.classList.remove('is-image-view');
+  lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
 }
 
 function showGalleryImage(index) {
@@ -94,12 +96,13 @@ function showGalleryImage(index) {
   fullImage.className = 'lightbox-full-image';
   lightboxMedia.classList.add('is-fading');
   window.setTimeout(() => {
-    lightboxMedia.replaceChildren(fullImage);
+    lightboxMedia.replaceChildren(fullImage, lightboxPrevious, lightboxNext);
     lightboxMedia.classList.remove('is-fading');
   }, 140);
 }
 
 function closeLightbox() {
+  if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   lightbox.classList.remove('is-open');
   lightbox.setAttribute('aria-hidden', 'true');
   lightboxMedia.replaceChildren();
@@ -176,7 +179,25 @@ lightboxNext.addEventListener('click', (event) => {
   showGalleryImage(currentGalleryIndex + 1);
 });
 
-document.querySelectorAll('[data-close-lightbox]').forEach((element) => {
+function handleLightboxClose() {
+  if (lightboxMedia.querySelector('.lightbox-full-image')) {
+    lightboxMedia.classList.add('is-fading');
+    window.setTimeout(() => {
+      renderGalleryGrid(currentGalleryTitle, currentGallery);
+      lightboxMedia.classList.remove('is-fading');
+    }, 160);
+    return;
+  }
+
+  closeLightbox();
+}
+
+lightboxClose.addEventListener('click', (event) => {
+  event.stopPropagation();
+  handleLightboxClose();
+});
+
+document.querySelectorAll('.lightbox-backdrop').forEach((element) => {
   element.addEventListener('click', closeLightbox);
 });
 
