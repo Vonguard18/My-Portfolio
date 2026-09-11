@@ -41,29 +41,45 @@
         <p class="eyebrow">Selected creative</p>
         <h2 id="work-title">From raw product<br>to <em>ready to run.</em></h2>
       </div>
-      <div class="project-grid">
-        <article class="project-card project-card--wide">
-          <!-- PLACEHOLDER: replace with a UGC-to-ad case study image or video thumbnail -->
-          <div class="project-visual visual--ugc"><span>UGC → Ad</span><small>01 / Content transformation</small></div>
-          <div class="project-info"><h3>UGC to Creative Ad</h3><p>Turning a simple customer-style product image into a polished, conversion-ready Meta ad.</p><span class="role-tag">UGC / Meta Ads</span></div>
-        </article>
-        <article class="project-card">
-          <!-- PLACEHOLDER: replace with a Meta ad batch screenshot -->
-          <div class="project-visual visual--meta"><span>Meta Ads</span><small>02 / Paid social creative</small></div>
-          <div class="project-info"><h3>Performance Ad Batches</h3><p>Static ad variations built for testing hooks, offers, layouts, and product benefits.</p><span class="role-tag">Static Ads</span></div>
-        </article>
-        <article class="project-card">
-          <!-- PLACEHOLDER: replace with a video editing reel or campaign clip -->
-          <div class="project-visual visual--video"><span>Motion Cut</span><small>03 / Video editing</small></div>
-          <div class="project-info"><h3>Short-Form Product Video</h3><p>Fast, clear edits that make product benefits easy to understand in the first few seconds.</p><span class="role-tag">Video</span></div>
-        </article>
-        <article class="project-card project-card--wide">
-          <!-- PLACEHOLDER: replace with product image before/after examples -->
-          <div class="project-visual visual--product"><span>Product Edit</span><small>04 / E-commerce visual</small></div>
-          <div class="project-info"><h3>Product Image Editing</h3><p>Cleaning, composing, and styling product images for stores, ads, and global campaigns.</p><span class="role-tag">Product Visuals</span></div>
-        </article>
+      <div class="album-grid">
+        <button class="album-item album-item--large" type="button" data-title="UGC to Creative Ad" data-type="image" data-src="assets/ugc-after.jpg">
+          <!-- PLACEHOLDER: replace with the finished UGC-to-ad image at assets/ugc-after.jpg -->
+          <span class="album-art album-art--ugc"><strong>UGC → Ad</strong><i>View piece ↗</i></span>
+          <span class="album-caption"><strong>UGC to Creative Ad</strong><small>Raw content into conversion-ready creative</small></span>
+        </button>
+        <button class="album-item" type="button" data-title="Performance Ad Batches" data-type="image" data-src="assets/meta-ad-01.jpg">
+          <!-- PLACEHOLDER: replace with a Meta ad batch image at assets/meta-ad-01.jpg -->
+          <span class="album-art album-art--meta"><strong>Meta Ads</strong><i>View piece ↗</i></span>
+          <span class="album-caption"><strong>Performance Ad Batches</strong><small>Hooks, offers, layouts, and variations</small></span>
+        </button>
+        <button class="album-item" type="button" data-title="Short-Form Product Video" data-type="video" data-src="assets/video-edit.mp4">
+          <!-- PLACEHOLDER: replace with a video file at assets/video-edit.mp4 -->
+          <span class="album-art album-art--video"><strong>Motion Cut</strong><i>Play reel ↗</i></span>
+          <span class="album-caption"><strong>Short-Form Product Video</strong><small>Product benefits in the first few seconds</small></span>
+        </button>
+        <button class="album-item" type="button" data-title="Product Image Editing" data-type="image" data-src="assets/product-edit.jpg">
+          <!-- PLACEHOLDER: replace with a product image edit at assets/product-edit.jpg -->
+          <span class="album-art album-art--product"><strong>Product Edit</strong><i>View piece ↗</i></span>
+          <span class="album-caption"><strong>Product Image Editing</strong><small>Clean, composed, and ready for store or ad</small></span>
+        </button>
+        <button class="album-item album-item--wide" type="button" data-title="Before / After Product Creative" data-type="image" data-src="assets/before-after.jpg">
+          <!-- PLACEHOLDER: replace with a before/after image at assets/before-after.jpg -->
+          <span class="album-art album-art--before-after"><strong>Before / After</strong><i>Compare piece ↗</i></span>
+          <span class="album-caption"><strong>Before / After Product Creative</strong><small>How a stronger visual changes the story</small></span>
+        </button>
       </div>
+      <p class="album-note">Click any piece to view it larger. Replace the marked asset paths with your own work.</p>
     </section>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+      <div class="lightbox-backdrop" data-close-lightbox></div>
+      <div class="lightbox-panel">
+        <button class="lightbox-close" type="button" aria-label="Close preview" data-close-lightbox>×</button>
+        <p class="eyebrow">Album preview</p>
+        <h2 id="lightbox-title">Selected creative</h2>
+        <div class="lightbox-media" id="lightbox-media"></div>
+      </div>
+    </div>
 
     <section class="proof-section" aria-label="Performance highlights">
       <div class="page-shell proof-grid">
