@@ -63,6 +63,46 @@ const ugcCover = document.querySelector('.album-art--ugc');
 const ugcCard = ugcCover?.closest('.album-item');
 const metaCover = document.querySelector('.album-art--meta');
 const metaCard = metaCover?.closest('.album-item');
+const motionCover = document.querySelector('.album-art--video');
+const motionGifs = [
+  'assets/Video%20Ads/2.gif',
+  'assets/Video%20Ads/3%20(2).gif',
+  'assets/Video%20Ads/3.gif',
+  'assets/Video%20Ads/4.gif',
+  'assets/Video%20Ads/Sequence%2001_1.gif',
+  'assets/Video%20Ads/Sequence%2001_2.gif'
+];
+const productEditGroups = [
+  { name: 'Air Mattress', folder: 'assets/Product%20Edit/Air%20Mattress/' },
+  { name: 'Camping LED Lamp', folder: 'assets/Product%20Edit/Camping%20Led%20Lamp/' },
+  { name: 'Camping Table', folder: 'assets/Product%20Edit/Camping%20Table/' },
+  { name: 'High Back Chair', folder: 'assets/Product%20Edit/High%20Back%20Chair/' },
+  { name: 'I Love You Engraved Heart Necklace', folder: 'assets/Product%20Edit/I%20Love%20You%20Engraved%20Heart%20Necklace/' },
+  { name: 'Inflatable Mattress', folder: 'assets/Product%20Edit/Inflatable%20Mattrress/' },
+  { name: 'Mini Camping Chair', folder: 'assets/Product%20Edit/Mini%20Camping%20Chair/' },
+  { name: 'To My Son Love You Forever Cross Bracelet', folder: 'assets/Product%20Edit/To%20My%20Son%20Love%20You%20Forever%20Cross%20Bracelet/' }
+];
+
+function naturalMediaSort(first, second) {
+  return decodeURIComponent(first).localeCompare(decodeURIComponent(second), undefined, { numeric: true, sensitivity: 'base' });
+}
+
+async function loadProductEditGroups() {
+  await Promise.all(productEditGroups.map(async (group) => {
+    try {
+      const response = await fetch(group.folder);
+      if (!response.ok) return;
+      const directory = await response.text();
+      const parsed = new DOMParser().parseFromString(directory, 'text/html');
+      group.images = [...parsed.querySelectorAll('a[href]')]
+        .map((link) => new URL(link.getAttribute('href'), new URL(group.folder, window.location.href)).href)
+        .filter((src) => /\.(avif|gif|jpe?g|mp4|png|webp)$/i.test(src))
+        .sort(naturalMediaSort);
+    } catch (error) {
+      group.images = [];
+    }
+  }));
+}
 
 function startRandomSlideshow(cover, images, overlay) {
   if (!cover || images.length === 0) return;
@@ -119,6 +159,15 @@ loadAllMetaAds().then(() => {
     );
   }
 });
+loadProductEditGroups();
+
+if (motionCover) {
+  startRandomSlideshow(
+    motionCover,
+    motionGifs,
+    'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
+  );
+}
 
 year.textContent = new Date().getFullYear();
 
@@ -226,6 +275,93 @@ function renderVideoGallery(title, gallery) {
   lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
 }
 
+function renderProductGallery(title, gallery) {
+  currentGalleryKind = 'product';
+  const galleryGrid = document.createElement('div');
+  galleryGrid.className = 'lightbox-gallery lightbox-gallery--product';
+
+  gallery.forEach((mediaSrc, index) => {
+    const mediaButton = document.createElement('button');
+    mediaButton.type = 'button';
+    mediaButton.className = 'lightbox-gallery-item';
+    mediaButton.setAttribute('aria-label', `Open project image ${index + 1}`);
+    const isVideo = /\.mp4$/i.test(mediaSrc);
+    const preview = document.createElement(isVideo ? 'video' : 'img');
+    preview.src = mediaSrc;
+    preview.alt = `${title} project ${index + 1}`;
+    preview.loading = 'lazy';
+    if (isVideo) {
+      preview.muted = true;
+      preview.loop = true;
+      preview.playsInline = true;
+      preview.preload = 'metadata';
+    }
+    mediaButton.addEventListener('click', () => {
+      const fullMedia = document.createElement(isVideo ? 'video' : 'img');
+      fullMedia.src = mediaSrc;
+      fullMedia.alt = `${title} project ${index + 1}`;
+      fullMedia.className = 'lightbox-full-image';
+      if (isVideo) {
+        fullMedia.controls = true;
+        fullMedia.autoplay = true;
+        fullMedia.playsInline = true;
+      }
+      currentGalleryIndex = index;
+      lightboxMedia.classList.add('is-fading');
+      lightboxPanel.classList.add('is-image-view');
+      window.setTimeout(() => {
+        lightboxMedia.replaceChildren(fullMedia, lightboxPrevious, lightboxNext);
+        lightboxMedia.classList.remove('is-fading');
+      }, 140);
+    });
+    mediaButton.appendChild(preview);
+    galleryGrid.appendChild(mediaButton);
+  });
+  lightboxMedia.classList.remove('is-fading');
+  lightboxMedia.classList.add('is-gallery');
+  lightboxPanel.classList.remove('is-image-view');
+  lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
+}
+
+function renderProductGroups() {
+  const groupsGrid = document.createElement('div');
+  groupsGrid.className = 'lightbox-meta-groups lightbox-product-groups';
+  productEditGroups.forEach((group) => {
+    const groupButton = document.createElement('button');
+    groupButton.type = 'button';
+    groupButton.className = 'lightbox-brand lightbox-product-group';
+    groupButton.setAttribute('aria-label', `Open ${group.name} product edits`);
+    if (group.images?.[0]) {
+      groupButton.style.backgroundImage = `linear-gradient(rgba(20, 20, 20, .35), rgba(20, 20, 20, .35)), url("${group.images[0]}")`;
+    }
+    const label = document.createElement('strong');
+    label.textContent = group.name;
+    groupButton.append(label);
+    groupButton.addEventListener('click', () => {
+      const openGroup = () => {
+        currentGallery = group.images || [];
+        currentGalleryTitle = group.name;
+        currentBrandGroup = group;
+        lightboxTitle.textContent = currentGalleryTitle;
+        lightboxClose.hidden = true;
+        lightboxBackButton.hidden = false;
+        renderProductGallery(currentGalleryTitle, currentGallery);
+      };
+      if (group.images?.length) {
+        openGroup();
+      } else {
+        loadProductEditGroups().then(openGroup);
+      }
+    });
+    groupsGrid.appendChild(groupButton);
+  });
+  lightboxMedia.classList.remove('is-fading', 'is-gallery');
+  lightboxPanel.classList.remove('is-image-view');
+  lightboxMedia.replaceChildren(groupsGrid);
+  lightboxClose.hidden = false;
+  lightboxBackButton.hidden = true;
+}
+
 function renderMetaGroups() {
   const groupsGrid = document.createElement('div');
   groupsGrid.className = 'lightbox-meta-groups';
@@ -267,12 +403,12 @@ function showGalleryImage(index) {
 
   currentGalleryIndex = (index + currentGallery.length) % currentGallery.length;
   const mediaSrc = currentGallery[currentGalleryIndex];
-  const isGif = currentGalleryKind === 'video' && /\.gif$/i.test(mediaSrc);
-  const fullImage = document.createElement(currentGalleryKind === 'video' && !isGif ? 'video' : 'img');
+  const isVideo = (currentGalleryKind === 'video' && !/\.gif$/i.test(mediaSrc)) || (currentGalleryKind === 'product' && /\.mp4$/i.test(mediaSrc));
+  const fullImage = document.createElement(isVideo ? 'video' : 'img');
   fullImage.src = mediaSrc;
   fullImage.alt = `${currentGalleryTitle} creative ${currentGalleryIndex + 1}`;
   fullImage.className = 'lightbox-full-image';
-  if (currentGalleryKind === 'video' && !isGif) {
+  if (isVideo) {
     fullImage.controls = true;
     fullImage.autoplay = true;
     fullImage.playsInline = true;
@@ -315,6 +451,14 @@ function showBrandGroups() {
   renderMetaGroups();
 }
 
+function showProductGroups() {
+  lightboxTitle.textContent = 'Product Edit Gallery';
+  currentGallery = [];
+  currentGalleryTitle = '';
+  currentGalleryIndex = 0;
+  renderProductGroups();
+}
+
 albumItems.forEach((item) => {
   item.addEventListener('click', () => {
     const title = item.dataset.title;
@@ -340,6 +484,16 @@ albumItems.forEach((item) => {
 
     if (item.dataset.type === 'video-gallery') {
       renderVideoGallery(title, gallery);
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+
+    if (item.dataset.type === 'product-gallery') {
+      currentBrandGroup = null;
+      renderProductGroups();
+      lightboxTitle.textContent = title;
       lightbox.classList.add('is-open');
       lightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -388,6 +542,8 @@ lightboxPanel.addEventListener('click', (event) => {
     window.setTimeout(() => {
       if (currentGalleryKind === 'video') {
         renderVideoGallery(currentGalleryTitle, currentGallery);
+      } else if (currentGalleryKind === 'product') {
+        renderProductGallery(currentGalleryTitle, currentGallery);
       } else {
         renderGalleryGrid(currentGalleryTitle, currentGallery);
       }
@@ -407,6 +563,10 @@ lightboxNext.addEventListener('click', (event) => {
 });
 
 function handleLightboxClose() {
+  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
+    showProductGroups();
+    return;
+  }
   if (currentBrandGroup) {
     showBrandGroups();
     return;
@@ -416,6 +576,8 @@ function handleLightboxClose() {
     window.setTimeout(() => {
       if (currentGalleryKind === 'video') {
         renderVideoGallery(currentGalleryTitle, currentGallery);
+      } else if (currentGalleryKind === 'product') {
+        renderProductGallery(currentGalleryTitle, currentGallery);
       } else {
         renderGalleryGrid(currentGalleryTitle, currentGallery);
       }
@@ -434,7 +596,11 @@ lightboxClose.addEventListener('click', (event) => {
 
 lightboxBackButton.addEventListener('click', (event) => {
   event.stopPropagation();
-  showBrandGroups();
+  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
+    showProductGroups();
+  } else {
+    showBrandGroups();
+  }
 });
 
 document.querySelectorAll('.lightbox-backdrop').forEach((element) => {

@@ -106,7 +106,23 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 }
 .album-art--meta > * { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(20, 18, 17, 0.62); }
 .album-art--meta strong, .album-art--meta i { color: #fffaf7; }
-.album-art--video { background: #d8d9d4; }
+.album-art--video {
+  position: relative;
+  background-color: #d8d9d4;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fffaf7;
+}
+.album-art--video::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52)), radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.42) 100%);
+  pointer-events: none;
+}
+.album-art--video > * { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(20, 18, 17, 0.62); }
+.album-art--video strong, .album-art--video i { color: #fffaf7; }
 .album-art--product { background: #e4dfd2; }
 .album-art--brand { background: #dcd8ce; }
 .album-art--before-after { background: var(--soft-clay); }
@@ -146,6 +162,8 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .lightbox-brand { min-height: 220px; position: relative; display: flex; align-items: center; justify-content: center; padding: 24px; border: 1px solid rgba(36,39,37,.12); border-radius: 18px; background: var(--brand-color); color: #fff; cursor: pointer; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
 .lightbox-brand:hover, .lightbox-brand:focus-visible { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,.12); }
 .lightbox-brand img { position: relative; z-index: 1; width: min(220px, 90%); height: 125px; object-fit: contain; object-position: center; filter: brightness(0) invert(1); }
+.lightbox-product-groups .lightbox-product-group { background-color: #d9ded8; background-position: center; background-size: cover; color: #fff; }
+.lightbox-product-group strong { position: relative; z-index: 1; max-width: 90%; font-family: var(--display); font-size: clamp(1.25rem, 2.5vw, 2rem); font-weight: 500; text-align: center; text-shadow: 0 2px 12px rgba(0,0,0,.7); }
 .lightbox-brand--svana img { filter: brightness(0); }
 .lightbox-full-image { display: block; width: auto; max-width: 100%; max-height: calc(90vh - 180px); object-fit: contain; background: transparent; border-radius: 18px; }
 .lightbox-media { position: relative; transition: opacity .18s ease, transform .18s ease; }
