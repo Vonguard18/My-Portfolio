@@ -46,15 +46,13 @@
           <span class="album-art album-art--ugc"><strong>UGC → Ad</strong><i>View piece ↗</i></span>
           <span class="album-caption"><strong>UGC Ad Gallery</strong><small>All creative variations from the UGC AD folder</small></span>
         </button>
-        <button class="album-item album-item--large" type="button" data-title="Performance Ad Batches" data-type="image" data-src="assets/meta-ad-01.jpg">
-          <!-- PLACEHOLDER: replace with a Meta ad batch image at assets/meta-ad-01.jpg -->
-          <span class="album-art album-art--meta"><strong>Meta Ads</strong><i>View piece ↗</i></span>
-          <span class="album-caption"><strong>Performance Ad Batches</strong><small>Hooks, offers, layouts, and variations</small></span>
+        <button class="album-item album-item--large" type="button" data-title="Meta Ads by Brand" data-type="meta">
+          <span class="album-art album-art--meta"><strong>Meta Ads</strong><i>Browse brands ↗</i></span>
+          <span class="album-caption"><strong>Performance Ad Batches</strong><small>Hooks, offers, layouts, and variations by brand</small></span>
         </button>
-        <button class="album-item" type="button" data-title="Short-Form Product Video" data-type="video" data-src="assets/video-edit.mp4">
-          <!-- PLACEHOLDER: replace with a video file at assets/video-edit.mp4 -->
+        <button class="album-item" type="button" data-title="Motion Cut Video Gallery" data-type="video-gallery" data-gallery='["assets/Video%20Ads/%2309.2%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/%23104%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%23114%20(-bns)%20dual-knee-brace%202.mp4","assets/Video%20Ads/%23138%20Creative%20Discovery%20dual-knee-brace_2.mp4","assets/Video%20Ads/%234.2%20FB%20Creative%20Discovery%20sunflower-fidget-ring-es.mp4","assets/Video%20Ads/%2347%20FB%20Creative%20Discovery%20man-love-you-forever-and-always-linked-bracelet%20video.mp4","assets/Video%20Ads/%2355%20FB%20Creative%20Discovery%20mother-son-forever-linked-together-bracelet_2.mp4","assets/Video%20Ads/%236%20FB%20Creative%20Discovery%20son-love-you-forever-nautical-bracelet.mp4","assets/Video%20Ads/%2361%20(-bns)%20To%20My%20Grandson%20Pray%20Through%20It%20Leather%20Cross%20Bracelet%20(Meta%20Experiment)_2.mp4","assets/Video%20Ads/%2368%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%2376.3%20Creative%20Discovery%20grandmother-grandson-forever-linked-together-bracelet.mp4","assets/Video%20Ads/%2388.1%20FB%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/2.gif","assets/Video%20Ads/3%20(2).gif","assets/Video%20Ads/3.gif","assets/Video%20Ads/4.gif","assets/Video%20Ads/Sequence%2001_1.gif","assets/Video%20Ads/Sequence%2001_2.gif"]'>
           <span class="album-art album-art--video"><strong>Motion Cut</strong><i>Play reel ↗</i></span>
-          <span class="album-caption"><strong>Short-Form Product Video</strong><small>Product benefits in the first few seconds</small></span>
+          <span class="album-caption"><strong>Motion Cut Video Gallery</strong><small>Video ads, reels, and animated creative</small></span>
         </button>
         <button class="album-item" type="button" data-title="Product Image Editing" data-type="image" data-src="assets/product-edit.jpg">
           <!-- PLACEHOLDER: replace with a product image edit at assets/product-edit.jpg -->
@@ -74,6 +72,7 @@
       <div class="lightbox-backdrop" data-close-lightbox></div>
       <div class="lightbox-panel">
         <button class="lightbox-close" type="button" aria-label="Close preview" data-close-lightbox>×</button>
+        <button class="lightbox-back-button" type="button" aria-label="Back to brand gallery">← Back</button>
         <p class="eyebrow">Album preview</p>
         <h2 id="lightbox-title">Selected creative</h2>
         <div class="lightbox-media" id="lightbox-media">
@@ -134,6 +133,7 @@
     <a href="#top">Back to top ↑</a>
   </footer>
 
+  <script src="meta-ads-data.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
