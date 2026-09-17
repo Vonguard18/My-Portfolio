@@ -4,13 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Michael Von Compendio is a graphic designer creating Meta ads, product visuals, video edits, and brand assets that help products get noticed.">
+  <meta name="author" content="Michael Von Compendio">
+  <meta name="theme-color" content="#f8f7f3">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='monospace'>MVC</text></svg>">
+  <meta property="og:title" content="Michael Von Compendio — Graphic Designer">
+  <meta property="og:description" content="I create Meta ads, product visuals, video edits, and branded content that help e-commerce teams show up clearly and convert attention into action.">
+  <meta property="og:image" content="assets/og-image.jpg">
+  <meta property="og:url" content="https://michaelvoncompendio.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Michael Von Compendio — Graphic Designer">
+  <meta name="twitter:description" content="I create Meta ads, product visuals, video edits, and branded content that help e-commerce teams show up clearly and convert attention into action.">
   <title>Michael Von Compendio — Graphic Designer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="preloader" id="preloader" aria-label="Loading">
+    <div class="preloader-bar"><div class="preloader-progress" id="preloader-progress" style="width: 0%"></div></div>
+    <p class="preloader-label">Loading creative…</p>
+  </div>
+
   <header class="site-header">
     <a class="wordmark" href="#top" aria-label="Michael Von Compendio home">MVC<span>.</span></a>
     <nav class="site-nav" aria-label="Primary navigation">
@@ -42,23 +58,23 @@
         <h2 id="work-title">From raw product<br>to <em>ready to run.</em></h2>
       </div>
       <div class="album-grid">
-        <button class="album-item" type="button" data-title="UGC Ad Gallery" data-type="image" data-src="assets/UGC%20AD/%23241.1%20no_4%20it_86c643w2y%20cu_86c01rgra.jpg" data-gallery='["assets/UGC%20AD/%23241.1%20no_4%20it_86c643w2y%20cu_86c01rgra.jpg","assets/UGC%20AD/%23260.1%20no_2%20it_86c75ncpk%20cu_86c01rgd5.jpg","assets/UGC%20AD/%23260.1%20no_3%20it_86c75ncpk%20cu_86c01rgd5.jpg","assets/UGC%20AD/%23417.1%20no_3%20it_86c96rh0k%20cu_86c01rgd5%20(2).jpeg","assets/UGC%20AD/%23423.1%20no_1%20it_86c9a4kn9%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23423.1%20no_2%20it_86c9a4j45%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23423.1%20no_4%20it_86c9a4kn9%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23426.1%20no_1%20it_86c9awm5h%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23426.1%20no_3%20it_86c9awg5b%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23445.1%20no_4%20it_86c9d0gyn%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23473.1%20no_1%20it_86c9j2hr9%20cu_86c01rgd5.jpeg"]'>
+        <button class="album-item reveal" type="button" data-title="UGC Ad Gallery" data-type="image" data-src="assets/UGC%20AD/%23241.1%20no_4%20it_86c643w2y%20cu_86c01rgra.jpg" data-gallery='["assets/UGC%20AD/%23241.1%20no_4%20it_86c643w2y%20cu_86c01rgra.jpg","assets/UGC%20AD/%23260.1%20no_2%20it_86c75ncpk%20cu_86c01rgd5.jpg","assets/UGC%20AD/%23260.1%20no_3%20it_86c75ncpk%20cu_86c01rgd5.jpg","assets/UGC%20AD/%23417.1%20no_3%20it_86c96rh0k%20cu_86c01rgd5%20(2).jpeg","assets/UGC%20AD/%23423.1%20no_1%20it_86c9a4kn9%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23423.1%20no_2%20it_86c9a4j45%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23423.1%20no_4%20it_86c9a4kn9%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23426.1%20no_1%20it_86c9awm5h%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23426.1%20no_3%20it_86c9awg5b%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23445.1%20no_4%20it_86c9d0gyn%20cu_86c01rgd5.jpeg","assets/UGC%20AD/%23473.1%20no_1%20it_86c9j2hr9%20cu_86c01rgd5.jpeg"]'>
           <span class="album-art album-art--ugc"><strong>UGC → Ad</strong><i>View piece ↗</i></span>
           <span class="album-caption"><strong>UGC Ad Gallery</strong><small>All creative variations from the UGC AD folder</small></span>
         </button>
-        <button class="album-item album-item--large" type="button" data-title="Meta Ads by Brand" data-type="meta">
+        <button class="album-item album-item--large reveal" type="button" data-title="Meta Ads by Brand" data-type="meta">
           <span class="album-art album-art--meta"><strong>Meta Ads</strong><i>Browse brands ↗</i></span>
           <span class="album-caption"><strong>Performance Ad Batches</strong><small>Hooks, offers, layouts, and variations by brand</small></span>
         </button>
-        <button class="album-item" type="button" data-title="Motion Cut Video Gallery" data-type="video-gallery" data-gallery='["assets/Video%20Ads/%2309.2%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/%23104%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%23114%20(-bns)%20dual-knee-brace%202.mp4","assets/Video%20Ads/%23138%20Creative%20Discovery%20dual-knee-brace_2.mp4","assets/Video%20Ads/%234.2%20FB%20Creative%20Discovery%20sunflower-fidget-ring-es.mp4","assets/Video%20Ads/%2347%20FB%20Creative%20Discovery%20man-love-you-forever-and-always-linked-bracelet%20video.mp4","assets/Video%20Ads/%2355%20FB%20Creative%20Discovery%20mother-son-forever-linked-together-bracelet_2.mp4","assets/Video%20Ads/%236%20FB%20Creative%20Discovery%20son-love-you-forever-nautical-bracelet.mp4","assets/Video%20Ads/%2361%20(-bns)%20To%20My%20Grandson%20Pray%20Through%20It%20Leather%20Cross%20Bracelet%20(Meta%20Experiment)_2.mp4","assets/Video%20Ads/%2368%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%2376.3%20Creative%20Discovery%20grandmother-grandson-forever-linked-together-bracelet.mp4","assets/Video%20Ads/%2388.1%20FB%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/2.gif","assets/Video%20Ads/3%20(2).gif","assets/Video%20Ads/3.gif","assets/Video%20Ads/4.gif","assets/Video%20Ads/Sequence%2001_1.gif","assets/Video%20Ads/Sequence%2001_2.gif"]'>
+        <button class="album-item reveal" type="button" data-title="Motion Cut Video Gallery" data-type="video-gallery" data-gallery='["assets/Video%20Ads/%2309.2%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/%23104%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%23114%20(-bns)%20dual-knee-brace%202.mp4","assets/Video%20Ads/%23138%20Creative%20Discovery%20dual-knee-brace_2.mp4","assets/Video%20Ads/%234.2%20FB%20Creative%20Discovery%20sunflower-fidget-ring-es.mp4","assets/Video%20Ads/%2347%20FB%20Creative%20Discovery%20man-love-you-forever-and-always-linked-bracelet%20video.mp4","assets/Video%20Ads/%2355%20FB%20Creative%20Discovery%20mother-son-forever-linked-together-bracelet_2.mp4","assets/Video%20Ads/%236%20FB%20Creative%20Discovery%20son-love-you-forever-nautical-bracelet.mp4","assets/Video%20Ads/%2361%20(-bns)%20To%20My%20Grandson%20Pray%20Through%20It%20Leather%20Cross%20Bracelet%20(Meta%20Experiment)_2.mp4","assets/Video%20Ads/%2368%20Creative%20Discovery%203d-knee-compression-pad.mp4","assets/Video%20Ads/%2376.3%20Creative%20Discovery%20grandmother-grandson-forever-linked-together-bracelet.mp4","assets/Video%20Ads/%2388.1%20FB%20Creative%20Discovery%20dual-knee-brace.mp4","assets/Video%20Ads/2.gif","assets/Video%20Ads/3%20(2).gif","assets/Video%20Ads/3.gif","assets/Video%20Ads/4.gif","assets/Video%20Ads/Sequence%2001_1.gif","assets/Video%20Ads/Sequence%2001_2.gif"]'>
           <span class="album-art album-art--video"><strong>Motion Cut</strong><i>Play reel ↗</i></span>
           <span class="album-caption"><strong>Motion Cut Video Gallery</strong><small>Video ads, reels, and animated creative</small></span>
         </button>
-        <button class="album-item" type="button" data-title="Product Edit Gallery" data-type="product-gallery">
+        <button class="album-item reveal" type="button" data-title="Product Edit Gallery" data-type="product-gallery">
           <span class="album-art album-art--product"><strong>Product Edit</strong><i>Browse projects ↗</i></span>
           <span class="album-caption"><strong>Product Image Editing</strong><small>Product visuals organized by project</small></span>
         </button>
-        <button class="album-item" type="button" data-title="Before / After Product Creative" data-type="image" data-src="assets/before-after.jpg">
+        <button class="album-item reveal" type="button" data-title="Before / After Product Creative" data-type="image" data-src="assets/before-after.jpg">
           <!-- PLACEHOLDER: replace with a before/after image at assets/before-after.jpg -->
           <span class="album-art album-art--before-after"><strong>Before / After</strong><i>Compare piece ↗</i></span>
           <span class="album-caption"><strong>Before / After Product Creative</strong><small>How a stronger visual changes the story</small></span>
@@ -82,10 +98,10 @@
     </div>
 
     <section class="proof-section" aria-label="Performance highlights">
-      <div class="page-shell proof-grid">
-        <div><strong>103</strong><span>credited wins<br>in 2025</span></div>
-        <div><strong>5.58</strong><span>highest ROAS<br>in 2025</span></div>
-        <div><strong>3.21</strong><span>average ROAS<br>in 2025</span></div>
+      <div class="page-shell proof-grid reveal-group">
+        <div><strong data-count="103">103</strong><span>credited wins<br>in 2025</span></div>
+        <div><strong data-count="5.58">5.58</strong><span>highest ROAS<br>in 2025</span></div>
+        <div><strong data-count="3.21">3.21</strong><span>average ROAS<br>in 2025</span></div>
         <p>Creative is not only about looking good. I design with the result in mind: clear communication, fast iteration, and assets ready for testing.</p>
       </div>
     </section>
@@ -96,7 +112,7 @@
           <p class="eyebrow">What I do</p>
           <h2 id="capabilities-title">Creative that earns<br>its place in the <em>feed.</em></h2>
         </div>
-        <div class="capabilities-list">
+        <div class="capabilities-list reveal-group">
           <div class="capability"><span class="capability-number">01</span><h3>Meta Ad Design</h3><p>Static and video ad batches built around clear hooks, strong hierarchy, product benefits, and testing variations.</p></div>
           <div class="capability"><span class="capability-number">02</span><h3>UGC & Product Creative</h3><p>I turn raw UGC, product photos, and rough ideas into polished creative assets ready for paid campaigns and storefronts.</p></div>
           <div class="capability"><span class="capability-number">03</span><h3>Branding & Video</h3><p>Logos, branded social content, product edits, and short-form video that keep every touchpoint consistent.</p></div>
@@ -134,5 +150,8 @@
 
   <script src="meta-ads-data.js"></script>
   <script src="script.js"></script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Person","name":"Michael Von Compendio","jobTitle":"Graphic Designer","url":"https://michaelvoncompendio.com","email":"khael2618@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Davao City","addressCountry":"PH"}}
+  </script>
 </body>
 </html>

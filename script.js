@@ -1,4 +1,37 @@
 const header = document.querySelector('.site-header');
+const preloader = document.querySelector('#preloader');
+const preloaderProgress = document.querySelector('#preloader-progress');
+
+const initPreloader = () => {
+  if (!preloader) return;
+  const images = document.querySelectorAll('img, video, source');
+  let loaded = 0;
+  const total = images.length || 1;
+  const updateProgress = () => {
+    loaded = Math.min(loaded + 1, total);
+    if (preloaderProgress) preloaderProgress.style.width = `${(loaded / total) * 100}%`;
+  };
+  if (images.length === 0) {
+    preloader.classList.add('is-done');
+    return;
+  }
+  images.forEach((media) => {
+    if (media.complete) {
+      updateProgress();
+    } else {
+      media.addEventListener('load', updateProgress, { once: true });
+      media.addEventListener('error', updateProgress, { once: true });
+    }
+  });
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (preloaderProgress) preloaderProgress.style.width = '100%';
+      preloader.classList.add('is-done');
+    }, 500);
+  });
+};
+initPreloader();
+
 const year = document.querySelector('#year');
 const lightbox = document.querySelector('#lightbox');
 const lightboxTitle = document.querySelector('#lightbox-title');
@@ -14,6 +47,7 @@ let currentGalleryTitle = '';
 let currentGalleryIndex = 0;
 let currentGalleryKind = 'image';
 let currentBrandGroup = null;
+let lastFocusedEl = null;
 const brandColors = {
   Carina: '#c93d62',
   Fjallbris: '#49302e',
@@ -64,6 +98,8 @@ const ugcCard = ugcCover?.closest('.album-item');
 const metaCover = document.querySelector('.album-art--meta');
 const metaCard = metaCover?.closest('.album-item');
 const motionCover = document.querySelector('.album-art--video');
+const productCover = document.querySelector('.album-art--product');
+const productCard = productCover?.closest('.album-item');
 const motionGifs = [
   'assets/Video%20Ads/2.gif',
   'assets/Video%20Ads/3%20(2).gif',
@@ -159,7 +195,16 @@ loadAllMetaAds().then(() => {
     );
   }
 });
-loadProductEditGroups();
+loadProductEditGroups().then(() => {
+  if (productCover && productCard) {
+    const productImages = productEditGroups.flatMap((group) => group.images || []);
+    startRandomSlideshow(
+      productCover,
+      productImages,
+      'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
+    );
+  }
+});
 
 if (motionCover) {
   startRandomSlideshow(
@@ -441,6 +486,7 @@ function closeLightbox() {
   lightboxClose.hidden = false;
   lightboxBackButton.hidden = true;
   document.body.style.overflow = '';
+  if (lastFocusedEl) lastFocusedEl.focus();
 }
 
 function showBrandGroups() {
@@ -466,7 +512,7 @@ albumItems.forEach((item) => {
     const gallery = item.dataset.gallery ? JSON.parse(item.dataset.gallery) : [];
 
     lightboxTitle.textContent = title;
-
+    lastFocusedEl = item;
     currentGallery = gallery;
     currentGalleryTitle = title;
     currentGalleryIndex = 0;
@@ -517,12 +563,20 @@ albumItems.forEach((item) => {
       media.playsInline = true;
     }
     media.addEventListener('error', () => {
-      lightboxMedia.innerHTML = `<div class="lightbox-missing">Add your sample at <strong>${source}</strong> to preview it here.</div>`;
+      const placeholder = document.createElement('div');
+      placeholder.className = 'lightbox-missing';
+      placeholder.append(
+        document.createTextNode('Add your sample at '),
+        Object.assign(document.createElement('strong'), { textContent: source }),
+        document.createTextNode(' to preview it here.')
+      );
+      lightboxMedia.replaceChildren(placeholder);
     }, { once: true });
     lightboxMedia.replaceChildren(media);
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    lightboxClose.focus();
   });
 });
 
@@ -612,3 +666,64 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'ArrowLeft' && lightbox.classList.contains('is-open') && lightboxMedia.querySelector('.lightbox-full-image')) showGalleryImage(currentGalleryIndex - 1);
   if (event.key === 'ArrowRight' && lightbox.classList.contains('is-open') && lightboxMedia.querySelector('.lightbox-full-image')) showGalleryImage(currentGalleryIndex + 1);
 });
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal, .reveal-group').forEach((el) => revealObserver.observe(el));
+}
+
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const strong = entry.target.querySelector('strong[data-count]');
+      if (!strong) return;
+      const target = parseFloat(strong.dataset.count);
+      const isDecimal = target % 1 !== 0;
+      const duration = 1800;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const value = target * (0.3 + 0.7 * (1 - Math.cos(Math.PI * progress)) / 2);
+        strong.textContent = isDecimal ? value.toFixed(2) : Math.floor(value).toString();
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+      countObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll('.proof-grid > div').forEach((el) => countObserver.observe(el));
+
+if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(hover: hover)').matches) {
+  const tiltItems = document.querySelectorAll('.album-item');
+  tiltItems.forEach((item) => {
+    let rect = item.getBoundingClientRect();
+    const onMouseMove = (e) => {
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const rx = ((x - rect.width / 2) / (rect.width / 2)) * 8;
+      const ry = ((rect.height / 2 - y) / (rect.height / 2)) * 8;
+      item.style.transform = `rotateY(${rx}deg) rotateX(${ry}deg) scale(1.02)`;
+    };
+    const onEnter = (e) => {
+      rect = item.getBoundingClientRect();
+      item.style.transition = 'transform 0.1s ease-out';
+      onMouseMove(e);
+    };
+    const onLeave = () => {
+      item.style.transition = 'transform 0.3s ease-out';
+      item.style.transform = '';
+    };
+    item.addEventListener('mouseenter', onEnter);
+    item.addEventListener('mousemove', onMouseMove);
+    item.addEventListener('mouseleave', onLeave);
+  });
+}
