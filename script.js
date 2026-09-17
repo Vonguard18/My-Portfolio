@@ -244,12 +244,16 @@ function renderGalleryGrid(title, gallery) {
 
     const image = document.createElement('img');
     image.src = imageSrc;
+    image.srcset = `${imageSrc} 1x, ${imageSrc} 2x`;
+    image.sizes = '(max-width: 700px) 520px, 350px';
     image.alt = `${title} creative ${index + 1}`;
     image.loading = 'lazy';
 
     imageButton.addEventListener('click', () => {
       const fullImage = document.createElement('img');
       fullImage.src = imageSrc;
+      fullImage.srcset = `${imageSrc} 1x, ${imageSrc} 2x`;
+      fullImage.sizes = '100vw';
       fullImage.alt = `${title} creative ${index + 1}`;
       fullImage.className = 'lightbox-full-image';
       lightboxMedia.classList.remove('is-gallery');
@@ -288,6 +292,8 @@ function renderVideoGallery(title, gallery) {
     preview.className = isGif ? '' : 'video-gallery-placeholder';
     if (isGif) {
       preview.src = mediaSrc;
+      preview.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
+      preview.sizes = '(max-width: 700px) 520px, 350px';
       preview.alt = `${title} video ${index + 1}`;
       preview.loading = 'lazy';
     } else {
@@ -297,6 +303,10 @@ function renderVideoGallery(title, gallery) {
     mediaButton.addEventListener('click', () => {
       const fullMedia = document.createElement(isGif ? 'img' : 'video');
       fullMedia.src = mediaSrc;
+      if (isGif) {
+        fullMedia.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
+        fullMedia.sizes = '100vw';
+      }
       fullMedia.alt = `${title} video ${index + 1}`;
       fullMedia.className = 'lightbox-full-image';
       if (!isGif) {
@@ -346,6 +356,10 @@ function renderProductGallery(title, gallery) {
     preview.src = mediaSrc;
     preview.alt = `${title} project ${index + 1}`;
     preview.loading = 'lazy';
+    if (!isVideo) {
+      preview.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
+      preview.sizes = '(max-width: 700px) 520px, 350px';
+    }
     if (isVideo) {
       preview.muted = true;
       preview.loop = true;
@@ -357,6 +371,10 @@ function renderProductGallery(title, gallery) {
       fullMedia.src = mediaSrc;
       fullMedia.alt = `${title} project ${index + 1}`;
       fullMedia.className = 'lightbox-full-image';
+      if (!isVideo) {
+        fullMedia.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
+        fullMedia.sizes = '100vw';
+      }
       if (isVideo) {
         fullMedia.controls = true;
         fullMedia.autoplay = true;
@@ -464,6 +482,10 @@ function showGalleryImage(index) {
   fullImage.src = mediaSrc;
   fullImage.alt = `${currentGalleryTitle} creative ${currentGalleryIndex + 1}`;
   fullImage.className = 'lightbox-full-image';
+  if (!isVideo) {
+    fullImage.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
+    fullImage.sizes = '100vw';
+  }
   if (isVideo) {
     fullImage.controls = true;
     fullImage.autoplay = true;
@@ -594,6 +616,32 @@ albumItems.forEach((item) => {
 lightbox.addEventListener('click', (event) => {
   if (event.target === lightbox || event.target.closest('.lightbox-backdrop')) {
     closeLightbox();
+  }
+});
+
+const focusableSelectors = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])'
+];
+
+lightbox.addEventListener('keydown', (event) => {
+  if (event.key !== 'Tab' || !lightbox.classList.contains('is-open')) return;
+  const focusable = [...lightbox.querySelectorAll(focusableSelectors.join(','))];
+  if (focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey) {
+    if (document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    }
+  } else if (document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
   }
 });
 
@@ -737,4 +785,30 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.mat
     item.addEventListener('mousemove', onMouseMove);
     item.addEventListener('mouseleave', onLeave);
   });
+}
+
+const menuToggle = document.querySelector('.menu-toggle');
+const siteHeader = document.querySelector('.site-header');
+
+if (menuToggle && siteHeader) {
+  const toggleMenu = (open) => {
+    const isOpening = typeof open === 'boolean' ? open : !siteHeader.classList.contains('is-menu-open');
+    siteHeader.classList.toggle('is-menu-open', isOpening);
+    document.body.classList.toggle('is-menu-open', isOpening);
+    menuToggle.setAttribute('aria-expanded', String(isOpening));
+  };
+
+  menuToggle.addEventListener('click', () => toggleMenu());
+
+  document.querySelectorAll('.site-nav a').forEach((link) => {
+    link.addEventListener('click', () => toggleMenu(false));
+  });
+
+  const closeOnEscape = (e) => {
+    if (e.key === 'Escape' && siteHeader.classList.contains('is-menu-open')) {
+      toggleMenu(false);
+      menuToggle.focus();
+    }
+  };
+  document.addEventListener('keydown', closeOnEscape);
 }
