@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Portfolio Localhost",
+			"type": "shell",
+			"command": "py.exe",
+			"args": [
+				"-m",
+				"http.server",
+				"8000",
+				"--bind",
+				"127.0.0.1"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

@@ -142,7 +142,23 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .album-art--product > * { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(20, 18, 17, 0.62); }
 .album-art--product strong, .album-art--product i { color: #fffaf7; }
 .album-art--brand { background: #dcd8ce; }
-.album-art--before-after { background: var(--soft-clay); }
+.album-art--before-after {
+  position: relative;
+  background-color: #e4dfd2;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fffaf7;
+}
+.album-art--before-after::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52)), radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.42) 100%);
+  pointer-events: none;
+}
+.album-art--before-after > * { position: relative; z-index: 1; text-shadow: 0 2px 12px rgba(20, 18, 17, 0.62); }
+.album-art--before-after strong, .album-art--before-after i { color: #fffaf7; }
 .album-caption { display: block; padding-top: 16px; }
 .album-caption strong, .album-caption small { display: block; }
 .album-caption strong { margin-bottom: 4px; font-family: var(--display); font-size: 1.35rem; font-weight: 500; letter-spacing: -.03em; }

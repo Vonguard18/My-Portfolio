@@ -100,6 +100,13 @@ const metaCard = metaCover?.closest('.album-item');
 const motionCover = document.querySelector('.album-art--video');
 const productCover = document.querySelector('.album-art--product');
 const productCard = productCover?.closest('.album-item');
+const beforeAfterCover = document.querySelector('.album-art--before-after');
+const beforeAfterGifs = [
+  'assets/Before%20and%20after/Air%20Mattress.gif',
+  'assets/Before%20and%20after/Led%20Headlamp.gif',
+  'assets/Before%20and%20after/Puffy%20Blanket.gif',
+  'assets/Before%20and%20after/Sunflower%20Ring.gif'
+];
 const motionGifs = [
   'assets/Video%20Ads/2.gif',
   'assets/Video%20Ads/3%20(2).gif',
@@ -212,6 +219,10 @@ if (motionCover) {
     motionGifs,
     'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
   );
+}
+
+if (beforeAfterCover && beforeAfterGifs.length > 0) {
+  beforeAfterCover.style.backgroundImage = `url('${beforeAfterGifs[0]}')`;
 }
 
 year.textContent = new Date().getFullYear();
