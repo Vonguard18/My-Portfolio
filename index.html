@@ -40,6 +40,9 @@
       <span class="menu-toggle-bar"></span>
       <span class="menu-toggle-bar"></span>
     </button>
+    <button class="theme-toggle" aria-label="Toggle dark mode" aria-pressed="false">
+      <span class="theme-icon" aria-hidden="true">☾</span>
+    </button>
   </header>
 
   <main id="top">
@@ -143,8 +146,31 @@
       <h2 id="contact-title">Let's make your product<br><em>impossible to ignore.</em></h2>
       <a class="contact-email" href="mailto:khael2618@gmail.com">khael2618@gmail.com <span aria-hidden="true">↗</span></a>
       <p class="contact-note"><a href="tel:+639937084106">0993 708 4106</a> · Available for freelance and remote creative work.</p>
+      <button class="contact-reveal-button" aria-expanded="false" aria-controls="contact-reveal-content">
+        Show contact info <span aria-hidden="true">↓</span>
+      </button>
+      <div class="contact-reveal-content" id="contact-reveal-content">
+        <div class="contact-card">
+          <div class="contact-row">
+            <img src="assets/Others/Whatsapp.jpg" alt="WhatsApp QR code" class="whatsapp-qr">
+            <div class="contact-row-info">
+              <span class="contact-row-label">WhatsApp</span>
+              <a class="contact-method-link" href="https://wa.me/639937084106" target="_blank" rel="noopener">Scan QR or tap to chat ↗</a>
+            </div>
+          </div>
+          <div class="contact-row contact-row--last">
+            <span class="contact-icon" aria-hidden="true">✉</span>
+            <div class="contact-row-info">
+              <span class="contact-row-label">Email</span>
+              <a class="contact-email-link" href="mailto:mvcompendio18@gmail.com">mvcompendio18@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
+
+  <button class="back-to-top" aria-label="Back to top" aria-hidden="true">↑</button>
 
   <footer class="site-footer page-shell">
     <span>© <span id="year"></span> Michael Von Compendio</span>

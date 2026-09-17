@@ -1,6 +1,7 @@
 const header = document.querySelector('.site-header');
 const preloader = document.querySelector('#preloader');
 const preloaderProgress = document.querySelector('#preloader-progress');
+const backToTop = document.querySelector('.back-to-top');
 
 const initPreloader = () => {
   if (!preloader) return;
@@ -222,14 +223,75 @@ if (motionCover) {
 }
 
 if (beforeAfterCover && beforeAfterGifs.length > 0) {
-  beforeAfterCover.style.backgroundImage = `url('${beforeAfterGifs[0]}')`;
+  startRandomSlideshow(
+    beforeAfterCover,
+    beforeAfterGifs,
+    'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
+  );
 }
 
 year.textContent = new Date().getFullYear();
 
+const themeToggle = document.querySelector('.theme-toggle');
+const themeIcon = themeToggle?.querySelector('.theme-icon');
+
+if (themeToggle && themeIcon) {
+  const applyTheme = (isDark) => {
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      themeToggle.setAttribute('aria-pressed', 'true');
+      themeIcon.textContent = '☀';
+      themeToggle.setAttribute('aria-label', 'Switch to light mode');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      themeToggle.setAttribute('aria-pressed', 'false');
+      themeIcon.textContent = '☾';
+      themeToggle.setAttribute('aria-label', 'Switch to dark mode');
+    }
+  };
+
+  const storedTheme = localStorage.getItem('theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = storedTheme === 'dark' || (storedTheme === null && systemPrefersDark);
+  applyTheme(isDarkMode);
+
+  themeToggle.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    applyTheme(!isDark);
+  });
+}
+
 window.addEventListener('scroll', () => {
   header.classList.toggle('is-scrolled', window.scrollY > 24);
+  if (backToTop) {
+    const visible = window.scrollY > 400;
+    backToTop.classList.toggle('is-visible', visible);
+    backToTop.setAttribute('aria-hidden', String(!visible));
+  }
 }, { passive: true });
+
+if (backToTop) {
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+const contactRevealButton = document.querySelector('.contact-reveal-button');
+const contactRevealContent = document.querySelector('#contact-reveal-content');
+
+if (contactRevealButton && contactRevealContent) {
+  contactRevealButton.addEventListener('click', () => {
+    const expanded = contactRevealButton.getAttribute('aria-expanded') === 'true';
+    contactRevealButton.setAttribute('aria-expanded', String(!expanded));
+    contactRevealContent.classList.toggle('is-open', !expanded);
+  });
+}
 
 function renderGalleryGrid(title, gallery) {
   currentGalleryKind = 'image';
@@ -676,14 +738,6 @@ lightboxNext.addEventListener('click', (event) => {
 });
 
 function handleLightboxClose() {
-  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
-    showProductGroups();
-    return;
-  }
-  if (currentBrandGroup) {
-    showBrandGroups();
-    return;
-  }
   if (lightboxMedia.querySelector('.lightbox-full-image')) {
     lightboxMedia.classList.add('is-fading');
     window.setTimeout(() => {
@@ -698,6 +752,14 @@ function handleLightboxClose() {
     }, 160);
     return;
   }
+  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
+    showProductGroups();
+    return;
+  }
+  if (currentBrandGroup) {
+    showBrandGroups();
+    return;
+  }
 
   closeLightbox();
 }
@@ -709,10 +771,26 @@ lightboxClose.addEventListener('click', (event) => {
 
 lightboxBackButton.addEventListener('click', (event) => {
   event.stopPropagation();
-  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
-    showProductGroups();
-  } else {
-    showBrandGroups();
+  if (lightboxMedia.querySelector('.lightbox-full-image')) {
+    lightboxMedia.classList.add('is-fading');
+    window.setTimeout(() => {
+      if (currentGalleryKind === 'video') {
+        renderVideoGallery(currentGalleryTitle, currentGallery);
+      } else if (currentGalleryKind === 'product') {
+        renderProductGallery(currentGalleryTitle, currentGallery);
+      } else {
+        renderGalleryGrid(currentGalleryTitle, currentGallery);
+      }
+      lightboxMedia.classList.remove('is-fading');
+    }, 160);
+    return;
+  }
+  if (currentBrandGroup) {
+    if (productEditGroups.includes(currentBrandGroup)) {
+      showProductGroups();
+    } else {
+      showBrandGroups();
+    }
   }
 });
 

@@ -49,7 +49,7 @@ Tiny SW (~2KB) for offline asset caching.
 ## Phase 3 — Low Priority (Future)
 
 ### 9. Contact Form
-Add a form via Formspree or Netlify Forms.
+Add a form via Gmail or Whatsapp
 
 ### 10. Case Study Pages
 Deep-dive into 1-2 featured projects with problem/solution/results.
