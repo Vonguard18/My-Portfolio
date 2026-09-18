@@ -1,0 +1,9 @@
+.git
+.kilo
+.vscode
+.wrangler
+%SystemDrive%
+*.md
+_*.py
+diagram.png
+node_modules
