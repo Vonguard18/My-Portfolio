@@ -254,6 +254,8 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .contact-header { margin-bottom: 36px; }
 .contact-panel { display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: center; padding: 28px 30px; background: rgba(255, 255, 255, 0.55); border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 10px 30px rgba(28, 25, 22, 0.04); }
 .contact-qr-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 200px; padding: 20px 18px; background: #111; border-radius: 22px; color: #f5f1eb; }
+.whatsapp-qr-link { display: block; border-radius: 12px; cursor: zoom-in; }
+.whatsapp-qr-link:hover .whatsapp-qr, .whatsapp-qr-link:focus-visible .whatsapp-qr { outline: 2px solid var(--clay); outline-offset: 3px; }
 .whatsapp-qr { width: 150px; height: 150px; object-fit: contain; border-radius: 12px; background: #fff; padding: 8px; }
 .contact-qr-caption { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.8); }
 .contact-details { display: flex; flex-direction: column; gap: 22px; }
