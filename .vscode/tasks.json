@@ -22,7 +22,7 @@
 			"command": "code",
 			"args": [
 				"--open-url",
-				"vscode://vscode.simple-browser/show?url=https%3A%2F%2Fmvc-gd-portfolio.pages.dev%2F"
+				"vscode://vscode.simple-browser/show?url=https%3A%2F%2Fvoncompendio.pages.dev%2F"
 			],
 			"problemMatcher": [],
 			"presentation": {
