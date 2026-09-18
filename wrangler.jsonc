@@ -1,8 +1,5 @@
 {
   "name": "voncompendio",
   "compatibility_date": "2026-09-18",
-  "pages_build_output_dir": ".",
-  "assets": {
-    "directory": "./"
-  }
+  "pages_build_output_dir": "."
 }
