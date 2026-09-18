@@ -15,6 +15,21 @@
 			"isBackground": true,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "Open Live Portfolio in VS Code",
+			"type": "shell",
+			"command": "code",
+			"args": [
+				"--open-url",
+				"vscode://vscode.simple-browser/show?url=https%3A%2F%2Fmvc-gd-portfolio.pages.dev%2F"
+			],
+			"problemMatcher": [],
+			"presentation": {
+				"reveal": "never",
+				"panel": "shared",
+				"close": true
+			}
 		}
 	]
 }
