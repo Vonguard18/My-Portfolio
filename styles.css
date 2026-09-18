@@ -247,7 +247,7 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .capability h3 { margin-bottom: 7px; font-family: var(--display); font-size: 1.8rem; font-weight: 500; letter-spacing: -.04em; }
 .capability p { max-width: 410px; margin-bottom: 0; color: #d5d6cf; font-size: .9rem; }
 .about-section { display: grid; grid-template-columns: .85fr 1fr; align-items: center; gap: 11vw; padding: 180px 0; }
-.about-photo { display: block; width: 100%; aspect-ratio: .82; object-fit: cover; background: #e7e3db; }
+.about-photo { display: block; width: 100%; aspect-ratio: .82; object-fit: cover; object-position: center 18%; background: #e7e3db; }
 .about-copy > p:not(.eyebrow) { max-width: 480px; color: var(--muted); font-size: 1rem; }
 .about-copy .text-link { margin-top: 15px; }
 .contact-section { padding: 110px 0 140px; border-top: 1px solid var(--line); }
