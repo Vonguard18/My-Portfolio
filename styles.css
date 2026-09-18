@@ -247,7 +247,40 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .capability h3 { margin-bottom: 7px; font-family: var(--display); font-size: 1.8rem; font-weight: 500; letter-spacing: -.04em; }
 .capability p { max-width: 410px; margin-bottom: 0; color: #d5d6cf; font-size: .9rem; }
 .about-section { display: grid; grid-template-columns: .85fr 1fr; align-items: center; gap: 11vw; padding: 180px 0; }
-.about-photo { display: block; width: 100%; aspect-ratio: .82; object-fit: cover; object-position: center 18%; background: #e7e3db; }
+.about-frame {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  padding: 11px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px rgba(28, 25, 22, 0.08);
+}
+.about-frame::before,
+.about-frame::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+.about-frame::before {
+  inset: 11px;
+  border: 1px solid rgba(183, 109, 80, 0.55);
+}
+.about-frame::after {
+  inset: 18px;
+  border: 1px solid rgba(36, 39, 37, 0.18);
+}
+.about-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: .88;
+  object-fit: cover;
+  object-position: center 22%;
+  transform: scale(1.22);
+  transform-origin: center 28%;
+  background: #e7e3db;
+}
 .about-copy > p:not(.eyebrow) { max-width: 480px; color: var(--muted); font-size: 1rem; }
 .about-copy .text-link { margin-top: 15px; }
 .contact-section { padding: 110px 0 140px; border-top: 1px solid var(--line); }
@@ -462,6 +495,13 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 [data-theme="dark"] .lightbox-missing { background: #4a4a43; }
 
 [data-theme="dark"] .about-photo { background: #4a4a43; }
+[data-theme="dark"] .about-frame {
+  background: #161716;
+  border-color: #3a3c38;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+[data-theme="dark"] .about-frame::before { border-color: rgba(234, 216, 206, 0.38); }
+[data-theme="dark"] .about-frame::after { border-color: rgba(240, 239, 233, 0.12); }
 
 [data-theme="dark"] .text-link { border-color: var(--ink); }
 [data-theme="dark"] .text-link:hover, [data-theme="dark"] .text-link:focus-visible { color: var(--clay); border-color: var(--clay); }
