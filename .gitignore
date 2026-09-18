@@ -1,6 +1,10 @@
-
+# Oversized source media. Public compressed copies live in assets/motion and assets/before-after.
 assets/Video Ads/
-
-assets/Video Ads/
-**/*.mp4
 **/*.gif
+assets/Product Edit/**/*.mp4
+
+# Accidental OS / local files
+%SystemDrive%/
+**/desktop.ini
+diagram.png
+_build_public_media.py

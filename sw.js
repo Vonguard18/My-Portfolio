@@ -1,11 +1,13 @@
-const CACHE_NAME = 'portfolio-v1';
+const CACHE_NAME = 'portfolio-v2';
 const ASSETS = [
-  '/',
+  './',
   'index.html',
   'styles.css',
   'script.js',
   'meta-ads-data.js',
-  'assets/Others/Whatsapp.jpg'
+  'product-edit-data.js',
+  'assets/Others/Whatsapp.jpg',
+  'assets/og-image.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -22,6 +24,19 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  const isPage = event.request.mode === 'navigate' || url.pathname.endsWith('.html');
+  if (isPage) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response.ok) {
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, response.clone()));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const network = fetch(event.request).then((response) => {

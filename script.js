@@ -79,6 +79,7 @@ const metaAdsGroups = window.metaAdsGroups || fallbackMetaAdsGroups;
 
 async function loadAllMetaAds() {
   await Promise.all(metaAdsGroups.map(async (group) => {
+    if (group.images?.length) return;
     try {
       const response = await fetch(group.folder);
       if (!response.ok) return;
@@ -89,7 +90,7 @@ async function loadAllMetaAds() {
         .filter((src) => /\.(avif|gif|jpe?g|png|webp)$/i.test(src) && !/logo/i.test(src));
       if (imageLinks.length > 0) group.images = imageLinks;
     } catch (error) {
-      // Direct file URLs do not expose directory listings; keep the fallback images.
+      // Hosted static sites do not expose directory listings; keep the data-file images.
     }
   }));
 }
@@ -102,30 +103,33 @@ const motionCover = document.querySelector('.album-art--video');
 const productCover = document.querySelector('.album-art--product');
 const productCard = productCover?.closest('.album-item');
 const beforeAfterCover = document.querySelector('.album-art--before-after');
-const beforeAfterGifs = [
-  'assets/Before%20and%20after/Air%20Mattress.gif',
-  'assets/Before%20and%20after/Led%20Headlamp.gif',
-  'assets/Before%20and%20after/Puffy%20Blanket.gif',
-  'assets/Before%20and%20after/Sunflower%20Ring.gif'
+const beforeAfterCovers = [
+  'assets/before-after/air-mattress.jpg',
+  'assets/before-after/led-headlamp.jpg',
+  'assets/before-after/puffy-blanket.jpg',
+  'assets/before-after/sunflower-ring.jpg'
 ];
-const motionGifs = [
-  'assets/Video%20Ads/2.gif',
-  'assets/Video%20Ads/3%20(2).gif',
-  'assets/Video%20Ads/3.gif',
-  'assets/Video%20Ads/4.gif',
-  'assets/Video%20Ads/Sequence%2001_1.gif',
-  'assets/Video%20Ads/Sequence%2001_2.gif'
+const motionCovers = [
+  'assets/motion/nautical-bracelet.jpg',
+  'assets/motion/sunflower-ring.jpg',
+  'assets/motion/linked-bracelet.jpg',
+  'assets/motion/dual-knee-brace.jpg',
+  'assets/motion/grandson-cross-bracelet.jpg',
+  'assets/motion/knee-compression-pad.jpg',
+  'assets/motion/mother-son-bracelet.jpg',
+  'assets/motion/dual-knee-brace-alt.jpg'
 ];
-const productEditGroups = [
-  { name: 'Air Mattress', folder: 'assets/Product%20Edit/Air%20Mattress/' },
-  { name: 'Camping LED Lamp', folder: 'assets/Product%20Edit/Camping%20Led%20Lamp/' },
-  { name: 'Camping Table', folder: 'assets/Product%20Edit/Camping%20Table/' },
-  { name: 'High Back Chair', folder: 'assets/Product%20Edit/High%20Back%20Chair/' },
-  { name: 'I Love You Engraved Heart Necklace', folder: 'assets/Product%20Edit/I%20Love%20You%20Engraved%20Heart%20Necklace/' },
-  { name: 'Inflatable Mattress', folder: 'assets/Product%20Edit/Inflatable%20Mattrress/' },
-  { name: 'Mini Camping Chair', folder: 'assets/Product%20Edit/Mini%20Camping%20Chair/' },
-  { name: 'To My Son Love You Forever Cross Bracelet', folder: 'assets/Product%20Edit/To%20My%20Son%20Love%20You%20Forever%20Cross%20Bracelet/' }
+const fallbackProductEditGroups = [
+  { name: 'Air Mattress', folder: 'assets/Product%20Edit/Air%20Mattress/', images: [] },
+  { name: 'Camping LED Lamp', folder: 'assets/Product%20Edit/Camping%20Led%20Lamp/', images: [] },
+  { name: 'Camping Table', folder: 'assets/Product%20Edit/Camping%20Table/', images: [] },
+  { name: 'High Back Chair', folder: 'assets/Product%20Edit/High%20Back%20Chair/', images: [] },
+  { name: 'I Love You Engraved Heart Necklace', folder: 'assets/Product%20Edit/I%20Love%20You%20Engraved%20Heart%20Necklace/', images: [] },
+  { name: 'Inflatable Mattress', folder: 'assets/Product%20Edit/Inflatable%20Mattrress/', images: [] },
+  { name: 'Mini Camping Chair', folder: 'assets/Product%20Edit/Mini%20Camping%20Chair/', images: [] },
+  { name: 'To My Son Love You Forever Cross Bracelet', folder: 'assets/Product%20Edit/To%20My%20Son%20Love%20You%20Forever%20Cross%20Bracelet/', images: [] }
 ];
+const productEditGroups = window.productEditGroups || fallbackProductEditGroups;
 
 function naturalMediaSort(first, second) {
   return decodeURIComponent(first).localeCompare(decodeURIComponent(second), undefined, { numeric: true, sensitivity: 'base' });
@@ -133,6 +137,7 @@ function naturalMediaSort(first, second) {
 
 async function loadProductEditGroups() {
   await Promise.all(productEditGroups.map(async (group) => {
+    if (group.images?.length) return;
     try {
       const response = await fetch(group.folder);
       if (!response.ok) return;
@@ -143,7 +148,7 @@ async function loadProductEditGroups() {
         .filter((src) => /\.(avif|gif|jpe?g|mp4|png|webp)$/i.test(src))
         .sort(naturalMediaSort);
     } catch (error) {
-      group.images = [];
+      group.images = group.images || [];
     }
   }));
 }
@@ -217,15 +222,15 @@ loadProductEditGroups().then(() => {
 if (motionCover) {
   startRandomSlideshow(
     motionCover,
-    motionGifs,
+    motionCovers,
     'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
   );
 }
 
-if (beforeAfterCover && beforeAfterGifs.length > 0) {
+if (beforeAfterCover && beforeAfterCovers.length > 0) {
   startRandomSlideshow(
     beforeAfterCover,
-    beforeAfterGifs,
+    beforeAfterCovers,
     'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
   );
 }
@@ -282,15 +287,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-const contactRevealButton = document.querySelector('.contact-reveal-button');
-const contactRevealContent = document.querySelector('#contact-reveal-content');
-
-if (contactRevealButton && contactRevealContent) {
-  contactRevealButton.addEventListener('click', () => {
-    const expanded = contactRevealButton.getAttribute('aria-expanded') === 'true';
-    contactRevealButton.setAttribute('aria-expanded', String(!expanded));
-    contactRevealContent.classList.toggle('is-open', !expanded);
-  });
+function posterFor(mediaSrc) {
+  return mediaSrc.replace(/\.(mp4|gif|webm)$/i, '.jpg');
 }
 
 function renderGalleryGrid(title, gallery) {
@@ -306,16 +304,12 @@ function renderGalleryGrid(title, gallery) {
 
     const image = document.createElement('img');
     image.src = imageSrc;
-    image.srcset = `${imageSrc} 1x, ${imageSrc} 2x`;
-    image.sizes = '(max-width: 700px) 520px, 350px';
     image.alt = `${title} creative ${index + 1}`;
     image.loading = 'lazy';
 
     imageButton.addEventListener('click', () => {
       const fullImage = document.createElement('img');
       fullImage.src = imageSrc;
-      fullImage.srcset = `${imageSrc} 1x, ${imageSrc} 2x`;
-      fullImage.sizes = '100vw';
       fullImage.alt = `${title} creative ${index + 1}`;
       fullImage.className = 'lightbox-full-image';
       lightboxMedia.classList.remove('is-gallery');
@@ -350,36 +344,26 @@ function renderVideoGallery(title, gallery) {
     mediaButton.setAttribute('aria-label', `Play video ${index + 1}`);
 
     const isGif = /\.gif$/i.test(mediaSrc);
-    const preview = document.createElement(isGif ? 'img' : 'span');
-    preview.className = isGif ? '' : 'video-gallery-placeholder';
-    if (isGif) {
-      preview.src = mediaSrc;
-      preview.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
-      preview.sizes = '(max-width: 700px) 520px, 350px';
-      preview.alt = `${title} video ${index + 1}`;
-      preview.loading = 'lazy';
-    } else {
-      preview.textContent = `Play video ${index + 1}`;
-    }
+    const preview = document.createElement('img');
+    preview.src = isGif ? mediaSrc : posterFor(mediaSrc);
+    preview.alt = `${title} video ${index + 1}`;
+    preview.loading = 'lazy';
 
     mediaButton.addEventListener('click', () => {
       const fullMedia = document.createElement(isGif ? 'img' : 'video');
       fullMedia.src = mediaSrc;
-      if (isGif) {
-        fullMedia.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
-        fullMedia.sizes = '100vw';
-      }
       fullMedia.alt = `${title} video ${index + 1}`;
       fullMedia.className = 'lightbox-full-image';
       if (!isGif) {
+        fullMedia.poster = posterFor(mediaSrc);
         fullMedia.controls = true;
         fullMedia.autoplay = true;
         fullMedia.playsInline = true;
-        fullMedia.preload = 'auto';
+        fullMedia.preload = 'metadata';
         fullMedia.addEventListener('error', () => {
           lightboxMedia.replaceChildren(Object.assign(document.createElement('div'), {
             className: 'lightbox-missing',
-            textContent: 'This video could not be decoded by the browser. Try opening the portfolio with Live Server.'
+            textContent: 'This video could not be played.'
           }), lightboxPrevious, lightboxNext);
         }, { once: true });
         fullMedia.load();
@@ -418,26 +402,20 @@ function renderProductGallery(title, gallery) {
     preview.src = mediaSrc;
     preview.alt = `${title} project ${index + 1}`;
     preview.loading = 'lazy';
-    if (!isVideo) {
-      preview.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
-      preview.sizes = '(max-width: 700px) 520px, 350px';
-    }
     if (isVideo) {
       preview.muted = true;
       preview.loop = true;
       preview.playsInline = true;
       preview.preload = 'metadata';
+      preview.poster = posterFor(mediaSrc);
     }
     mediaButton.addEventListener('click', () => {
       const fullMedia = document.createElement(isVideo ? 'video' : 'img');
       fullMedia.src = mediaSrc;
       fullMedia.alt = `${title} project ${index + 1}`;
       fullMedia.className = 'lightbox-full-image';
-      if (!isVideo) {
-        fullMedia.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
-        fullMedia.sizes = '100vw';
-      }
       if (isVideo) {
+        fullMedia.poster = posterFor(mediaSrc);
         fullMedia.controls = true;
         fullMedia.autoplay = true;
         fullMedia.playsInline = true;
@@ -544,19 +522,16 @@ function showGalleryImage(index) {
   fullImage.src = mediaSrc;
   fullImage.alt = `${currentGalleryTitle} creative ${currentGalleryIndex + 1}`;
   fullImage.className = 'lightbox-full-image';
-  if (!isVideo) {
-    fullImage.srcset = `${mediaSrc} 1x, ${mediaSrc} 2x`;
-    fullImage.sizes = '100vw';
-  }
   if (isVideo) {
+    fullImage.poster = posterFor(mediaSrc);
     fullImage.controls = true;
     fullImage.autoplay = true;
     fullImage.playsInline = true;
-    fullImage.preload = 'auto';
+    fullImage.preload = 'metadata';
     fullImage.addEventListener('error', () => {
       lightboxMedia.replaceChildren(Object.assign(document.createElement('div'), {
         className: 'lightbox-missing',
-        textContent: 'This video could not be decoded by the browser. Try opening the portfolio with Live Server.'
+        textContent: 'This video could not be played.'
       }), lightboxPrevious, lightboxNext);
     }, { once: true });
     fullImage.load();
