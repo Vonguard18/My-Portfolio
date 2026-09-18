@@ -275,11 +275,7 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .about-photo {
   display: block;
   width: 100%;
-  aspect-ratio: .88;
-  object-fit: cover;
-  object-position: center 22%;
-  transform: scale(1.22);
-  transform-origin: center 28%;
+  height: auto;
   background: #e7e3db;
 }
 .about-copy > p:not(.eyebrow) { max-width: 480px; color: var(--muted); font-size: 1rem; }
