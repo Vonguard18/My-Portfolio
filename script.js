@@ -107,7 +107,9 @@ const beforeAfterCovers = [
   'assets/before-after/air-mattress.jpg',
   'assets/before-after/led-headlamp.jpg',
   'assets/before-after/puffy-blanket.jpg',
-  'assets/before-after/sunflower-ring.jpg'
+  'assets/before-after/sunflower-ring.jpg',
+  'assets/before-after/mini-chair.jpg',
+  'assets/before-after/high-back-chair.jpg'
 ];
 const motionCovers = [
   'assets/motion/nautical-bracelet.jpg',
@@ -284,6 +286,12 @@ if (backToTop) {
 }
 
 if ('serviceWorker' in navigator) {
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
@@ -306,6 +314,10 @@ function renderGalleryGrid(title, gallery) {
     image.src = imageSrc;
     image.alt = `${title} creative ${index + 1}`;
     image.loading = 'lazy';
+    image.addEventListener('error', () => {
+      imageButton.remove();
+      currentGallery = currentGallery.filter((src) => src !== imageSrc);
+    });
 
     imageButton.addEventListener('click', () => {
       const fullImage = document.createElement('img');
