@@ -295,10 +295,15 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .whatsapp-qr { width: 150px; height: 150px; object-fit: contain; border-radius: 12px; background: #fff; padding: 8px; }
 .contact-qr-caption { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.8); }
 .contact-details { display: flex; flex-direction: column; gap: 22px; }
-.contact-item { display: flex; flex-direction: column; gap: 6px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.contact-item { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
 .contact-label { color: var(--muted); font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.contact-item a { color: var(--ink); font-family: var(--display); font-size: clamp(1.2rem, 2vw, 2rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.15; transition: color .2s ease; }
-.contact-item a:hover, .contact-item a:focus-visible { color: var(--clay); }
+.contact-item .contact-action { display: inline-flex; min-height: 48px; max-width: 100%; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 999px; padding: 11px 18px; font: 600 .92rem/1.3 var(--body); letter-spacing: 0; transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease; }
+.contact-action--primary { background: var(--ink); color: var(--paper) !important; }
+.contact-action--primary:hover, .contact-action--primary:focus-visible { background: var(--clay); color: #fff !important; }
+.contact-action--secondary { border-color: var(--line) !important; background: transparent; color: var(--ink); }
+.contact-action--secondary:hover, .contact-action--secondary:focus-visible { border-color: var(--clay) !important; color: var(--clay); }
+.contact-item .contact-action:active { transform: scale(.96); }
+.contact-detail { max-width: 100%; overflow-wrap: anywhere; color: var(--muted); font-size: .88rem; }
 .contact-status { margin: 0; color: var(--muted); font-size: .92rem; }
 .site-footer { display: flex; justify-content: space-between; padding: 25px 0 32px; border-top: 1px solid var(--line); color: var(--muted); font-size: .7rem; }
 .site-footer a { color: var(--ink); }
@@ -400,6 +405,7 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
   .about-visual { max-width: 380px; }
   .contact-section { padding: 80px 0 110px; }
   .contact-panel { grid-template-columns: 1fr; gap: 22px; padding: 20px 18px; border-radius: 22px; }
+  .contact-details { order: -1; }
   .contact-qr-box { min-height: 180px; padding: 18px 16px; }
   .whatsapp-qr { width: 120px; height: 120px; }
   .contact-details { gap: 16px; }
@@ -419,7 +425,11 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
   .lightbox-nav--previous { left: 10px; }
   .lightbox-nav--next { right: 10px; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .reveal, .reveal-group > * { opacity: 1; transform: none; }
+}
 
 .theme-toggle {
   display: flex;
@@ -525,6 +535,8 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 }
 
 [data-theme="dark"] .contact-item { border-bottom-color: rgba(234, 216, 206, 0.12); }
+[data-theme="dark"] .contact-action--secondary { border-color: var(--line) !important; }
+[data-theme="dark"] .contact-action--secondary:hover, [data-theme="dark"] .contact-action--secondary:focus-visible { border-color: var(--soft-clay) !important; color: var(--soft-clay); }
 [data-theme="dark"] .contact-label { color: #d4d8d0; }
 [data-theme="dark"] .contact-item a { color: #f3efe9; }
 [data-theme="dark"] .contact-item a:hover, [data-theme="dark"] .contact-item a:focus-visible { color: var(--soft-clay); }

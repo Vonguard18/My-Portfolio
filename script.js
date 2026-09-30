@@ -914,6 +914,11 @@ const countObserver = new IntersectionObserver((entries) => {
       if (!strong) return;
       const target = parseFloat(strong.dataset.count);
       const isDecimal = target % 1 !== 0;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        strong.textContent = isDecimal ? target.toFixed(2) : target.toString();
+        countObserver.unobserve(entry.target);
+        return;
+      }
       const duration = 1800;
       const startTime = performance.now();
       const step = (now) => {
