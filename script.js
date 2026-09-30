@@ -138,25 +138,43 @@ function projectSlug(value) {
   return value.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-function updateProjectUrl(project, item = '') {
+function updateProjectUrl(project, item = '', media = '') {
   const url = new URL(window.location.href);
   if (project) {
     url.searchParams.set('project', project);
     if (item) url.searchParams.set('item', item);
     else url.searchParams.delete('item');
+    if (media !== '') url.searchParams.set('media', media);
+    else url.searchParams.delete('media');
   } else {
     url.searchParams.delete('project');
     url.searchParams.delete('item');
+    url.searchParams.delete('media');
   }
   window.history.replaceState({}, '', url);
 }
 
-function setShareProject(project, item = '') {
+function setShareProject(project, item = '', media = '') {
   if (!lightboxShare) return;
   lightboxShare.hidden = !project;
   lightboxShare.dataset.project = project || '';
   lightboxShare.dataset.item = item;
-  lightboxShare.textContent = 'Copy project link';
+  lightboxShare.dataset.media = media;
+  lightboxShare.textContent = media === '' ? 'Copy project link' : 'Copy media link';
+}
+
+function setShareMedia(index = null) {
+  if (!lightboxShare?.dataset.project) return;
+  const mediaIndex = index === null ? '' : String(index);
+  const project = lightboxShare.dataset.project;
+  const item = lightboxShare.dataset.item || '';
+  setShareProject(project, item, mediaIndex);
+  if (index !== null) {
+    const mediaSrc = currentGallery[index] || '';
+    const isVideo = /\.(mp4|webm|mov)$/i.test(mediaSrc);
+    lightboxShare.textContent = isVideo ? 'Copy video link' : 'Copy image link';
+  }
+  updateProjectUrl(project, item, mediaIndex);
 }
 
 if (lightboxShare) {
@@ -165,11 +183,13 @@ if (lightboxShare) {
     shareUrl.searchParams.set('project', lightboxShare.dataset.project);
     if (lightboxShare.dataset.item) shareUrl.searchParams.set('item', lightboxShare.dataset.item);
     else shareUrl.searchParams.delete('item');
+    if (lightboxShare.dataset.media !== '') shareUrl.searchParams.set('media', lightboxShare.dataset.media);
+    else shareUrl.searchParams.delete('media');
     try {
       await navigator.clipboard.writeText(shareUrl.href);
       lightboxShare.textContent = 'Link copied';
     } catch (error) {
-      window.prompt('Copy this project link:', shareUrl.href);
+      window.prompt('Copy this link:', shareUrl.href);
     }
   });
 }
@@ -343,6 +363,7 @@ function posterFor(mediaSrc) {
 }
 
 function renderGalleryGrid(title, gallery) {
+  setShareMedia(null);
   currentGalleryKind = 'image';
   const galleryGrid = document.createElement('div');
   galleryGrid.className = 'lightbox-gallery';
@@ -371,6 +392,7 @@ function renderGalleryGrid(title, gallery) {
       lightboxMedia.classList.add('is-fading');
       lightboxPanel.classList.add('is-image-view');
       currentGalleryIndex = index;
+      setShareMedia(index);
       window.setTimeout(() => {
         lightboxMedia.replaceChildren(fullImage, lightboxPrevious, lightboxNext);
         lightboxMedia.classList.remove('is-fading');
@@ -388,6 +410,7 @@ function renderGalleryGrid(title, gallery) {
 }
 
 function renderVideoGallery(title, gallery) {
+  setShareMedia(null);
   currentGalleryKind = 'video';
   const galleryGrid = document.createElement('div');
   galleryGrid.className = 'lightbox-gallery lightbox-gallery--video';
@@ -426,6 +449,7 @@ function renderVideoGallery(title, gallery) {
       lightboxMedia.classList.add('is-fading');
       lightboxPanel.classList.add('is-image-view');
       currentGalleryIndex = index;
+      setShareMedia(index);
       window.setTimeout(() => {
         lightboxMedia.replaceChildren(fullMedia, lightboxPrevious, lightboxNext);
         lightboxMedia.classList.remove('is-fading');
@@ -443,6 +467,7 @@ function renderVideoGallery(title, gallery) {
 }
 
 function renderProductGallery(title, gallery) {
+  setShareMedia(null);
   currentGalleryKind = 'product';
   const galleryGrid = document.createElement('div');
   galleryGrid.className = 'lightbox-gallery lightbox-gallery--product';
@@ -478,6 +503,7 @@ function renderProductGallery(title, gallery) {
       currentGalleryIndex = index;
       lightboxMedia.classList.add('is-fading');
       lightboxPanel.classList.add('is-image-view');
+      setShareMedia(index);
       window.setTimeout(() => {
         lightboxMedia.replaceChildren(fullMedia, lightboxPrevious, lightboxNext);
         lightboxMedia.classList.remove('is-fading');
@@ -576,6 +602,7 @@ function showGalleryImage(index) {
 
   currentGalleryIndex = (index + currentGallery.length) % currentGallery.length;
   const mediaSrc = currentGallery[currentGalleryIndex];
+  setShareMedia(currentGalleryIndex);
   const isVideo = (currentGalleryKind === 'video' && !/\.gif$/i.test(mediaSrc)) || (currentGalleryKind === 'product' && /\.mp4$/i.test(mediaSrc));
   const fullImage = document.createElement(isVideo ? 'video' : 'img');
   fullImage.src = mediaSrc;
@@ -596,6 +623,8 @@ function showGalleryImage(index) {
     fullImage.load();
   }
   lightboxMedia.classList.add('is-fading');
+  lightboxMedia.classList.remove('is-gallery');
+  lightboxPanel.classList.add('is-image-view');
   window.setTimeout(() => {
     lightboxMedia.replaceChildren(fullImage, lightboxPrevious, lightboxNext);
     lightboxMedia.classList.remove('is-fading');
@@ -624,6 +653,8 @@ function openSharedProject() {
   const params = new URLSearchParams(window.location.search);
   const project = params.get('project');
   const item = params.get('item');
+  const mediaIndex = Number.parseInt(params.get('media'), 10);
+  const hasMediaIndex = Number.isInteger(mediaIndex) && mediaIndex >= 0;
   if (!project) return;
 
   if (project === 'product-edit') {
@@ -642,6 +673,7 @@ function openSharedProject() {
     lightboxBackButton.hidden = false;
     setShareProject('product-edit', item);
     renderProductGallery(group.name, currentGallery);
+    if (hasMediaIndex) showGalleryImage(mediaIndex);
     return;
   }
 
@@ -661,11 +693,15 @@ function openSharedProject() {
     document.body.style.overflow = 'hidden';
     setShareProject('meta-ads', item);
     renderGalleryGrid(currentGalleryTitle, currentGallery);
+    if (hasMediaIndex) showGalleryImage(mediaIndex);
     return;
   }
 
   const card = [...albumItems].find((candidate) => projectSlug(candidate.dataset.title || '') === project);
-  if (card) card.click();
+  if (card) {
+    card.click();
+    if (hasMediaIndex) showGalleryImage(mediaIndex);
+  }
 }
 
 function showBrandGroups() {
