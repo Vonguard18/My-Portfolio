@@ -205,6 +205,9 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
 .lightbox-panel h2 { margin-bottom: 24px; font-size: clamp(2rem, 4vw, 3.5rem); }
 .lightbox-back { position: absolute; top: 18px; left: 20px; border: 0; background: none; color: var(--ink); cursor: pointer; font-size: .82rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 .lightbox-close { position: absolute; top: 15px; right: 20px; border: 0; background: none; color: var(--ink); cursor: pointer; font-size: 2rem; line-height: 1; }
+.lightbox-share { position: absolute; top: 19px; right: 62px; z-index: 2; border: 1px solid var(--line); border-radius: 999px; padding: 8px 13px; background: var(--paper); color: var(--ink); cursor: pointer; font: 600 .72rem var(--body); }
+.lightbox-share:hover, .lightbox-share:focus-visible { border-color: var(--clay); color: var(--clay); }
+.lightbox-share[hidden] { display: none; }
 .lightbox-back-button { position: absolute; top: 22px; left: 42px; z-index: 2; display: none; border: 0; padding: 0; background: none; color: var(--ink); cursor: pointer; font: 600 .78rem var(--body); letter-spacing: .06em; text-transform: uppercase; }
 .lightbox-back-button:not([hidden]) { display: block; }
 .lightbox-back-button:hover, .lightbox-back-button:focus-visible { color: var(--clay); }
@@ -409,6 +412,7 @@ h1 em, h2 em { color: var(--clay); font-style: italic; }
   .lightbox-panel { padding: 35px 20px 20px; }
   .lightbox-panel.is-image-view { width: 100%; max-width: calc(100vw - 40px); padding: 35px 20px 20px; }
   .lightbox-back-button { top: 16px; left: 20px; }
+  .lightbox-share { top: 13px; right: 48px; padding: 7px 10px; font-size: .66rem; }
   .lightbox-meta-groups { grid-template-columns: 1fr; }
   .lightbox-panel.is-image-view .lightbox-media { max-height: calc(90vh - 155px); }
   .lightbox-full-image { max-height: calc(90vh - 155px); }

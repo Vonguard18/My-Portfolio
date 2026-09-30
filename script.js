@@ -40,6 +40,7 @@ const lightboxMedia = document.querySelector('#lightbox-media');
 const lightboxPanel = document.querySelector('.lightbox-panel');
 const lightboxClose = document.querySelector('.lightbox-close');
 const lightboxBackButton = document.querySelector('.lightbox-back-button');
+const lightboxShare = document.querySelector('#lightbox-share');
 const lightboxPrevious = document.querySelector('#lightbox-previous');
 const lightboxNext = document.querySelector('#lightbox-next');
 const albumItems = document.querySelectorAll('.album-item');
@@ -133,6 +134,46 @@ const fallbackProductEditGroups = [
 ];
 const productEditGroups = window.productEditGroups || fallbackProductEditGroups;
 
+function projectSlug(value) {
+  return value.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function updateProjectUrl(project, item = '') {
+  const url = new URL(window.location.href);
+  if (project) {
+    url.searchParams.set('project', project);
+    if (item) url.searchParams.set('item', item);
+    else url.searchParams.delete('item');
+  } else {
+    url.searchParams.delete('project');
+    url.searchParams.delete('item');
+  }
+  window.history.replaceState({}, '', url);
+}
+
+function setShareProject(project, item = '') {
+  if (!lightboxShare) return;
+  lightboxShare.hidden = !project;
+  lightboxShare.dataset.project = project || '';
+  lightboxShare.dataset.item = item;
+  lightboxShare.textContent = 'Copy project link';
+}
+
+if (lightboxShare) {
+  lightboxShare.addEventListener('click', async () => {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set('project', lightboxShare.dataset.project);
+    if (lightboxShare.dataset.item) shareUrl.searchParams.set('item', lightboxShare.dataset.item);
+    else shareUrl.searchParams.delete('item');
+    try {
+      await navigator.clipboard.writeText(shareUrl.href);
+      lightboxShare.textContent = 'Link copied';
+    } catch (error) {
+      window.prompt('Copy this project link:', shareUrl.href);
+    }
+  });
+}
+
 function naturalMediaSort(first, second) {
   return decodeURIComponent(first).localeCompare(decodeURIComponent(second), undefined, { numeric: true, sensitivity: 'base' });
 }
@@ -209,6 +250,7 @@ loadAllMetaAds().then(() => {
       'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
     );
   }
+  openSharedProject();
 });
 loadProductEditGroups().then(() => {
   if (productCover && productCard) {
@@ -219,6 +261,7 @@ loadProductEditGroups().then(() => {
       'linear-gradient(135deg, rgba(10, 10, 10, 0.58), rgba(10, 10, 10, 0.18) 42%, rgba(10, 10, 10, 0.52))'
     );
   }
+  openSharedProject();
 });
 
 if (motionCover) {
@@ -471,6 +514,8 @@ function renderProductGroups() {
         lightboxTitle.textContent = currentGalleryTitle;
         lightboxClose.hidden = true;
         lightboxBackButton.hidden = false;
+        updateProjectUrl('product-edit', projectSlug(group.name));
+        setShareProject('product-edit', projectSlug(group.name));
         renderProductGallery(currentGalleryTitle, currentGallery);
       };
       if (group.images?.length) {
@@ -509,6 +554,8 @@ function renderMetaGroups() {
       currentGallery = group.images;
       currentGalleryTitle = `${group.name} Meta Ads`;
       currentGalleryIndex = 0;
+      updateProjectUrl('meta-ads', projectSlug(group.name));
+      setShareProject('meta-ads', projectSlug(group.name));
       lightboxTitle.textContent = currentGalleryTitle;
       lightboxClose.hidden = true;
       lightboxBackButton.hidden = false;
@@ -565,13 +612,65 @@ function closeLightbox() {
   currentGalleryIndex = 0;
   currentGalleryKind = 'image';
   currentBrandGroup = null;
+  updateProjectUrl(null);
+  setShareProject(null);
   lightboxClose.hidden = false;
   lightboxBackButton.hidden = true;
   document.body.style.overflow = '';
   if (lastFocusedEl) lastFocusedEl.focus();
 }
 
+function openSharedProject() {
+  const params = new URLSearchParams(window.location.search);
+  const project = params.get('project');
+  const item = params.get('item');
+  if (!project) return;
+
+  if (project === 'product-edit') {
+    if (!item) return;
+    const group = productEditGroups.find((candidate) => projectSlug(candidate.name) === item);
+    if (!group) return;
+    lastFocusedEl = [...albumItems].find((candidate) => candidate.dataset.type === 'product-gallery') || null;
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    currentGallery = group.images || [];
+    currentGalleryTitle = group.name;
+    currentBrandGroup = group;
+    lightboxTitle.textContent = group.name;
+    lightboxClose.hidden = true;
+    lightboxBackButton.hidden = false;
+    setShareProject('product-edit', item);
+    renderProductGallery(group.name, currentGallery);
+    return;
+  }
+
+  if (project === 'meta-ads') {
+    const group = metaAdsGroups.find((candidate) => projectSlug(candidate.name) === item);
+    if (!group) return;
+    lastFocusedEl = [...albumItems].find((candidate) => candidate.dataset.type === 'meta') || null;
+    currentBrandGroup = group;
+    currentGallery = group.images || [];
+    currentGalleryTitle = `${group.name} Meta Ads`;
+    currentGalleryIndex = 0;
+    lightboxTitle.textContent = currentGalleryTitle;
+    lightboxClose.hidden = true;
+    lightboxBackButton.hidden = false;
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setShareProject('meta-ads', item);
+    renderGalleryGrid(currentGalleryTitle, currentGallery);
+    return;
+  }
+
+  const card = [...albumItems].find((candidate) => projectSlug(candidate.dataset.title || '') === project);
+  if (card) card.click();
+}
+
 function showBrandGroups() {
+  updateProjectUrl('meta-ads-by-brand');
+  setShareProject(null);
   lightboxTitle.textContent = 'Meta Ads by Brand';
   currentGallery = [];
   currentGalleryTitle = '';
@@ -580,6 +679,8 @@ function showBrandGroups() {
 }
 
 function showProductGroups() {
+  updateProjectUrl('product-edit');
+  setShareProject(null);
   lightboxTitle.textContent = 'Product Edit Gallery';
   currentGallery = [];
   currentGalleryTitle = '';
@@ -599,6 +700,9 @@ albumItems.forEach((item) => {
     currentGalleryTitle = title;
     currentGalleryIndex = 0;
     currentBrandGroup = null;
+    const itemProject = projectSlug(title);
+    updateProjectUrl(item.dataset.type === 'product-gallery' ? 'product-edit' : itemProject);
+    setShareProject(item.dataset.type === 'product-gallery' ? null : itemProject);
     lightboxClose.hidden = false;
     lightboxBackButton.hidden = true;
 
