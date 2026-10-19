@@ -658,13 +658,18 @@ function openSharedProject() {
   if (!project) return;
 
   if (project === 'product-edit') {
-    if (!item) return;
-    const group = productEditGroups.find((candidate) => projectSlug(candidate.name) === item);
-    if (!group) return;
     lastFocusedEl = [...albumItems].find((candidate) => candidate.dataset.type === 'product-gallery') || null;
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    const group = item
+      ? productEditGroups.find((candidate) => projectSlug(candidate.name) === item)
+      : null;
+    if (!group) {
+      showProductGroups();
+      if (lastFocusedEl?.dataset.title) lightboxTitle.textContent = lastFocusedEl.dataset.title;
+      return;
+    }
     currentGallery = group.images || [];
     currentGalleryTitle = group.name;
     currentBrandGroup = group;
