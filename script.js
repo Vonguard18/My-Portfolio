@@ -43,6 +43,7 @@ const lightboxBackButton = document.querySelector('.lightbox-back-button');
 const lightboxShare = document.querySelector('#lightbox-share');
 const lightboxPrevious = document.querySelector('#lightbox-previous');
 const lightboxNext = document.querySelector('#lightbox-next');
+const lightboxStatus = document.querySelector('#lightbox-status');
 const albumItems = document.querySelectorAll('.album-item');
 let currentGallery = [];
 let currentGalleryTitle = '';
@@ -379,25 +380,13 @@ function renderGalleryGrid(title, gallery) {
     image.alt = `${title} creative ${index + 1}`;
     image.loading = 'lazy';
     image.addEventListener('error', () => {
-      imageButton.remove();
-      currentGallery = currentGallery.filter((src) => src !== imageSrc);
+      image.replaceWith(Object.assign(document.createElement('span'), {
+        className: 'lightbox-tile-missing',
+        textContent: 'This image could not be loaded.'
+      }));
     });
 
-    imageButton.addEventListener('click', () => {
-      const fullImage = document.createElement('img');
-      fullImage.src = imageSrc;
-      fullImage.alt = `${title} creative ${index + 1}`;
-      fullImage.className = 'lightbox-full-image';
-      lightboxMedia.classList.remove('is-gallery');
-      lightboxMedia.classList.add('is-fading');
-      lightboxPanel.classList.add('is-image-view');
-      currentGalleryIndex = index;
-      setShareMedia(index);
-      window.setTimeout(() => {
-        lightboxMedia.replaceChildren(fullImage, lightboxPrevious, lightboxNext);
-        lightboxMedia.classList.remove('is-fading');
-      }, 140);
-    });
+    imageButton.addEventListener('click', () => showGalleryImage(index));
 
     imageButton.appendChild(image);
     galleryGrid.appendChild(imageButton);
@@ -407,6 +396,7 @@ function renderGalleryGrid(title, gallery) {
   lightboxMedia.classList.add('is-gallery');
   lightboxPanel.classList.remove('is-image-view');
   lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
+  syncLightboxChrome(false);
 }
 
 function renderVideoGallery(title, gallery) {
@@ -427,34 +417,7 @@ function renderVideoGallery(title, gallery) {
     preview.alt = `${title} video ${index + 1}`;
     preview.loading = 'lazy';
 
-    mediaButton.addEventListener('click', () => {
-      const fullMedia = document.createElement(isGif ? 'img' : 'video');
-      fullMedia.src = mediaSrc;
-      fullMedia.alt = `${title} video ${index + 1}`;
-      fullMedia.className = 'lightbox-full-image';
-      if (!isGif) {
-        fullMedia.poster = posterFor(mediaSrc);
-        fullMedia.controls = true;
-        fullMedia.autoplay = true;
-        fullMedia.playsInline = true;
-        fullMedia.preload = 'metadata';
-        fullMedia.addEventListener('error', () => {
-          lightboxMedia.replaceChildren(Object.assign(document.createElement('div'), {
-            className: 'lightbox-missing',
-            textContent: 'This video could not be played.'
-          }), lightboxPrevious, lightboxNext);
-        }, { once: true });
-        fullMedia.load();
-      }
-      lightboxMedia.classList.add('is-fading');
-      lightboxPanel.classList.add('is-image-view');
-      currentGalleryIndex = index;
-      setShareMedia(index);
-      window.setTimeout(() => {
-        lightboxMedia.replaceChildren(fullMedia, lightboxPrevious, lightboxNext);
-        lightboxMedia.classList.remove('is-fading');
-      }, 140);
-    });
+    mediaButton.addEventListener('click', () => showGalleryImage(index));
 
     mediaButton.appendChild(preview);
     galleryGrid.appendChild(mediaButton);
@@ -464,6 +427,7 @@ function renderVideoGallery(title, gallery) {
   lightboxMedia.classList.add('is-gallery');
   lightboxPanel.classList.remove('is-image-view');
   lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
+  syncLightboxChrome(false);
 }
 
 function renderProductGallery(title, gallery) {
@@ -489,26 +453,7 @@ function renderProductGallery(title, gallery) {
       preview.preload = 'metadata';
       preview.poster = posterFor(mediaSrc);
     }
-    mediaButton.addEventListener('click', () => {
-      const fullMedia = document.createElement(isVideo ? 'video' : 'img');
-      fullMedia.src = mediaSrc;
-      fullMedia.alt = `${title} project ${index + 1}`;
-      fullMedia.className = 'lightbox-full-image';
-      if (isVideo) {
-        fullMedia.poster = posterFor(mediaSrc);
-        fullMedia.controls = true;
-        fullMedia.autoplay = true;
-        fullMedia.playsInline = true;
-      }
-      currentGalleryIndex = index;
-      lightboxMedia.classList.add('is-fading');
-      lightboxPanel.classList.add('is-image-view');
-      setShareMedia(index);
-      window.setTimeout(() => {
-        lightboxMedia.replaceChildren(fullMedia, lightboxPrevious, lightboxNext);
-        lightboxMedia.classList.remove('is-fading');
-      }, 140);
-    });
+    mediaButton.addEventListener('click', () => showGalleryImage(index));
     mediaButton.appendChild(preview);
     galleryGrid.appendChild(mediaButton);
   });
@@ -516,6 +461,7 @@ function renderProductGallery(title, gallery) {
   lightboxMedia.classList.add('is-gallery');
   lightboxPanel.classList.remove('is-image-view');
   lightboxMedia.replaceChildren(galleryGrid, lightboxPrevious, lightboxNext);
+  syncLightboxChrome(false);
 }
 
 function renderProductGroups() {
@@ -526,19 +472,20 @@ function renderProductGroups() {
     groupButton.type = 'button';
     groupButton.className = 'lightbox-brand lightbox-product-group';
     groupButton.setAttribute('aria-label', `Open ${group.name} product edits`);
-    if (group.images?.[0]) {
-      groupButton.style.backgroundImage = `linear-gradient(rgba(20, 20, 20, .35), rgba(20, 20, 20, .35)), url("${group.images[0]}")`;
-    }
+    const visual = document.createElement('span');
+    visual.className = 'lightbox-product-visual';
+    visual.setAttribute('aria-hidden', 'true');
+    if (group.images?.[0]) visual.style.backgroundImage = `url("${group.images[0]}")`;
     const label = document.createElement('strong');
     label.textContent = group.name;
-    groupButton.append(label);
+    groupButton.append(visual, label);
     groupButton.addEventListener('click', () => {
       const openGroup = () => {
         currentGallery = group.images || [];
         currentGalleryTitle = group.name;
         currentBrandGroup = group;
         lightboxTitle.textContent = currentGalleryTitle;
-        lightboxClose.hidden = true;
+        lightboxClose.hidden = false;
         lightboxBackButton.hidden = false;
         updateProjectUrl('product-edit', projectSlug(group.name));
         setShareProject('product-edit', projectSlug(group.name));
@@ -555,8 +502,8 @@ function renderProductGroups() {
   lightboxMedia.classList.remove('is-fading', 'is-gallery');
   lightboxPanel.classList.remove('is-image-view');
   lightboxMedia.replaceChildren(groupsGrid);
-  lightboxClose.hidden = false;
-  lightboxBackButton.hidden = true;
+  currentBrandGroup = null;
+  syncLightboxChrome(false);
 }
 
 function renderMetaGroups() {
@@ -583,7 +530,7 @@ function renderMetaGroups() {
       updateProjectUrl('meta-ads', projectSlug(group.name));
       setShareProject('meta-ads', projectSlug(group.name));
       lightboxTitle.textContent = currentGalleryTitle;
-      lightboxClose.hidden = true;
+      lightboxClose.hidden = false;
       lightboxBackButton.hidden = false;
       renderGalleryGrid(currentGalleryTitle, currentGallery);
     });
@@ -593,8 +540,21 @@ function renderMetaGroups() {
   lightboxMedia.classList.remove('is-fading', 'is-gallery');
   lightboxPanel.classList.remove('is-image-view');
   lightboxMedia.replaceChildren(groupsGrid);
+  currentBrandGroup = null;
+  syncLightboxChrome(false);
+}
+
+function syncLightboxChrome(showingImage) {
   lightboxClose.hidden = false;
-  lightboxBackButton.hidden = true;
+  if (showingImage && currentGallery.length) {
+    lightboxStatus.hidden = false;
+    lightboxStatus.textContent = `${currentGalleryTitle} · ${currentGalleryIndex + 1} / ${currentGallery.length}`;
+    lightboxBackButton.hidden = false;
+    return;
+  }
+  lightboxStatus.hidden = true;
+  lightboxStatus.textContent = '';
+  lightboxBackButton.hidden = !currentBrandGroup;
 }
 
 function showGalleryImage(index) {
@@ -603,6 +563,7 @@ function showGalleryImage(index) {
   currentGalleryIndex = (index + currentGallery.length) % currentGallery.length;
   const mediaSrc = currentGallery[currentGalleryIndex];
   setShareMedia(currentGalleryIndex);
+  syncLightboxChrome(true);
   const isVideo = (currentGalleryKind === 'video' && !/\.gif$/i.test(mediaSrc)) || (currentGalleryKind === 'product' && /\.mp4$/i.test(mediaSrc));
   const fullImage = document.createElement(isVideo ? 'video' : 'img');
   fullImage.src = mediaSrc;
@@ -645,6 +606,8 @@ function closeLightbox() {
   setShareProject(null);
   lightboxClose.hidden = false;
   lightboxBackButton.hidden = true;
+  lightboxStatus.hidden = true;
+  lightboxStatus.textContent = '';
   document.body.style.overflow = '';
   if (lastFocusedEl) lastFocusedEl.focus();
 }
@@ -674,7 +637,7 @@ function openSharedProject() {
     currentGalleryTitle = group.name;
     currentBrandGroup = group;
     lightboxTitle.textContent = group.name;
-    lightboxClose.hidden = true;
+    lightboxClose.hidden = false;
     lightboxBackButton.hidden = false;
     setShareProject('product-edit', item);
     renderProductGallery(group.name, currentGallery);
@@ -691,7 +654,7 @@ function openSharedProject() {
     currentGalleryTitle = `${group.name} Meta Ads`;
     currentGalleryIndex = 0;
     lightboxTitle.textContent = currentGalleryTitle;
-    lightboxClose.hidden = true;
+    lightboxClose.hidden = false;
     lightboxBackButton.hidden = false;
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
@@ -869,36 +832,9 @@ lightboxNext.addEventListener('click', (event) => {
   showGalleryImage(currentGalleryIndex + 1);
 });
 
-function handleLightboxClose() {
-  if (lightboxMedia.querySelector('.lightbox-full-image')) {
-    lightboxMedia.classList.add('is-fading');
-    window.setTimeout(() => {
-      if (currentGalleryKind === 'video') {
-        renderVideoGallery(currentGalleryTitle, currentGallery);
-      } else if (currentGalleryKind === 'product') {
-        renderProductGallery(currentGalleryTitle, currentGallery);
-      } else {
-        renderGalleryGrid(currentGalleryTitle, currentGallery);
-      }
-      lightboxMedia.classList.remove('is-fading');
-    }, 160);
-    return;
-  }
-  if (currentBrandGroup && productEditGroups.includes(currentBrandGroup)) {
-    showProductGroups();
-    return;
-  }
-  if (currentBrandGroup) {
-    showBrandGroups();
-    return;
-  }
-
-  closeLightbox();
-}
-
 lightboxClose.addEventListener('click', (event) => {
   event.stopPropagation();
-  handleLightboxClose();
+  closeLightbox();
 });
 
 lightboxBackButton.addEventListener('click', (event) => {
@@ -947,34 +883,6 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal, .reveal-group').forEach((el) => revealObserver.observe(el));
 }
-
-const countObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      const strong = entry.target.querySelector('strong[data-count]');
-      if (!strong) return;
-      const target = parseFloat(strong.dataset.count);
-      const isDecimal = target % 1 !== 0;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        strong.textContent = isDecimal ? target.toFixed(2) : target.toString();
-        countObserver.unobserve(entry.target);
-        return;
-      }
-      const duration = 1800;
-      const startTime = performance.now();
-      const step = (now) => {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const value = target * (0.3 + 0.7 * (1 - Math.cos(Math.PI * progress)) / 2);
-        strong.textContent = isDecimal ? value.toFixed(2) : Math.floor(value).toString();
-        if (progress < 1) window.requestAnimationFrame(step);
-      };
-      window.requestAnimationFrame(step);
-      countObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.6 });
-document.querySelectorAll('.proof-grid > div').forEach((el) => countObserver.observe(el));
 
 if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(hover: hover)').matches) {
   const tiltItems = document.querySelectorAll('.album-item');
